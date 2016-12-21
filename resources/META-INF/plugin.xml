@@ -1,0 +1,67 @@
+<idea-plugin version="2">
+  <id>JS</id>
+  <name>Javascript idea plugin</name>
+  <version>0.0.1</version>
+  <vendor email="kgbetlej@gmail.com" url=""/>
+
+  <description><![CDATA[
+      This plugin provide basic support for javascript files<br>
+    ]]></description>
+
+  <change-notes><![CDATA[
+      <h3>Version 0.01<h3>
+      <h4>ASSEMBLER version</h4>
+      <ul>
+        <li>Add basic support for keywords:
+          <ul>
+            <li>var</li>
+            <li>function</li>
+            <li>new</li>
+            <li>for</li>
+            <li>while</li>
+            <li>if</li>
+            <li>else</li>
+          </ul>
+        </li>
+        <li>Add variable and function recognize</li>
+        <li>Add hightlighter for all supported base funtions and keywords</li>
+      </ul>
+    ]]>
+  </change-notes>
+
+  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+  <idea-version since-build="145.0"/>
+
+  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+       on how to target different products -->
+  <!-- uncomment to enable plugin in all products
+  <depends>com.intellij.modules.lang</depends>
+  -->
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- Add your extensions here -->
+    <fileTypeFactory implementation="com.kgb.js.JSFileTypFactory" />
+    <lang.parserDefinition language="JS" implementationClass="com.kgb.js.parser.JSParserDefinition" />
+    <!--<lang.syntaxHighlighterFactory language="Javascript" implementationClass="com.kgb.js.codestyle.LispSynthaxHighlighterFactory" />-->
+
+    <!-- Annotators -->
+    <!--<annotator language="Javascript" implementationClass="com.kgb.lisp.annotators.LispDefFunAnnotator" />-->
+    <!--<annotator language="Javascript" implementationClass="com.kgb.lisp.annotators.LispPropertyAnnotator" />-->
+    <!-- Settings pages -->
+    <!--<colorSettingsPage implementation="com.kgb.lisp.settings.LispColorSettingsPage" />-->
+
+    <!-- line markers -->
+    <!--<codeInsight.lineMarkerProvider language="Javascript" implementationClass="com.kgb.lisp.linemarkers.LineMarkerProvider" />-->
+
+    <!-- Completion contributor -->
+    <!--<completion.contributor language="Lisp" implementationClass="com.kgb.lisp.completion.LispCompletionContributor" />-->
+    <!--<completion.contributor language="Lisp" implementationClass="com.kgb.lisp.completion.LispMakeCompletionContributor" />-->
+    <!--<completion.contributor language="Lisp" implementationClass="com.kgb.lisp.completion.LispLoadCompletionContributor" />-->
+
+    <lang.braceMatcher language="JS" implementationClass="com.kgb.js.JSBraceMatcher" />
+  </extensions>
+
+  <actions>
+    <!-- Add your actions here -->
+  </actions>
+
+</idea-plugin>

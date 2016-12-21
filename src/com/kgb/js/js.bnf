@@ -1,0 +1,41 @@
+{
+    parserClass="com.kgb.js.parser.JSParser"
+//    parserUtilClass="com.kgb.lisp.parser.LispParserUtil"
+
+    psiClassPrefix="JS"
+    psiImplClassSuffix="Impl"
+    psiPackage="com.kgb.js.psi"
+    psiImplPackage="com.kgb.js.psi.impl"
+    psiImplUtilClass="com.kgb.js.psi.impl.JSPsiImplUtil"
+
+    elementTypeHolderClass="com.kgb.js.psi.JSTypes"
+    elementTypeClass="com.kgb.js.psi.JSElementType"
+    tokenTypeClass="com.kgb.js.psi.JSTokenType"
+
+    tokens=[
+
+        LP='{'
+        RP='}'
+
+        space='regexp:[\s\t]+'
+        comment='regexp://.*'
+        number='regexp:\d+(\.\d*)?'
+        string="regexp:(\"([^\"\\]|\\.)*\")"
+        TRUE="true"
+        FALSE="false"
+        NULL="null"
+        vname="regexp:[a-zA-Z][a-zA-Z_\-0-9]*"
+        EQ_SEPARATOR = "="
+        var='var'
+
+    ]
+}
+
+root ::= root_item *
+//root_item definition
+
+private root_item ::= (block_body|COMMENT|EOL)
+private block_body ::= json_object | var_declaration
+json_object ::= LP SPACE* (json_object | json_item)* SPACE* RP
+json_item ::= var_declaration
+var_declaration ::= var? vname EQ_SEPARATOR string
