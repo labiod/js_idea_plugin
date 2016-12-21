@@ -19,6 +19,7 @@
 
         space='regexp:[\s\t]+'
         comment='regexp://.*'
+        multiline_comment='regexp:/\*.*\n\t\r\*/'
         number='regexp:\d+(\.\d*)?'
         string="regexp:(\"([^\"\\]|\\.)*\")"
         TRUE="true"
@@ -32,10 +33,13 @@
 }
 
 root ::= root_item *
+
+meta comma_separated_list ::= <<param>> (',' <<param>>) *
+meta semicolon_separated_list ::= <<param>> (';' <<param>>) *
 //root_item definition
 
-private root_item ::= (block_body|COMMENT|EOL)
-private block_body ::= json_object | var_declaration
-json_object ::= LP SPACE* (json_object | json_item)* SPACE* RP
+private root_item ::= file_body |COMMENT|EOL
+private file_body ::= <<semicolon_separated_list(json_object | var_declaration)>>
+json_object ::= LP SPACE* <<comma_separated_list(json_object | json_item)>> SPACE* RP
 json_item ::= var_declaration
 var_declaration ::= var? vname EQ_SEPARATOR string

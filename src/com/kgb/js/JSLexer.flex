@@ -5,7 +5,7 @@ import com.intellij.psi.tree.IElementType;
 import org.intellij.grammar.psi.BnfTypes;
 
 import static com.intellij.psi.TokenType.BAD_CHARACTER;
-import static com.intellij.psi.TokenType.WHITE_SPACE;
+import static com.inteillij.psi.TokenType.WHITE_SPACE;
 import static com.kgb.js.psi.JSTypes.*;
 
 %%
@@ -28,28 +28,30 @@ WHITE_SPACE=\s+
 
 SPACE=[\s\t]+
 COMMENT="//".*
+MULTILINE_COMMENT="/"\*.*\n\t\r\*"/"
 NUMBER=[0-9]+(\.[0-9]*)?
 STRING=(\"([^\"\\]|\\.)*\")
 VNAME=[a-zA-Z][a-zA-Z_\-0-9]*
 
 %%
 <YYINITIAL> {
-  {WHITE_SPACE}      { return WHITE_SPACE; }
+  {WHITE_SPACE}            { return WHITE_SPACE; }
 
-  "{"                { return LP; }
-  "}"                { return RP; }
-  "true"             { return TRUE; }
-  "false"            { return FALSE; }
-  "null"             { return NULL; }
-  "="                { return EQ_SEPARATOR; }
-  "var"              { return VAR; }
-  "EOL"              { return EOL; }
+  "{"                      { return LP; }
+  "}"                      { return RP; }
+  "true"                   { return TRUE; }
+  "false"                  { return FALSE; }
+  "null"                   { return NULL; }
+  "="                      { return EQ_SEPARATOR; }
+  "var"                    { return VAR; }
+  "EOL"                    { return EOL; }
 
-  {SPACE}            { return SPACE; }
-  {COMMENT}          { return COMMENT; }
-  {NUMBER}           { return NUMBER; }
-  {STRING}           { return STRING; }
-  {VNAME}            { return VNAME; }
+  {SPACE}                  { return SPACE; }
+  {COMMENT}                { return COMMENT; }
+  {MULTILINE_COMMENT}      { return MULTILINE_COMMENT; }
+  {NUMBER}                 { return NUMBER; }
+  {STRING}                 { return STRING; }
+  {VNAME}                  { return VNAME; }
 
 }
 
