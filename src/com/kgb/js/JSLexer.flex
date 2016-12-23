@@ -5,7 +5,7 @@ import com.intellij.psi.tree.IElementType;
 import org.intellij.grammar.psi.BnfTypes;
 
 import static com.intellij.psi.TokenType.BAD_CHARACTER;
-import static com.inteillij.psi.TokenType.WHITE_SPACE;
+import static com.intellij.psi.TokenType.WHITE_SPACE;
 import static com.kgb.js.psi.JSTypes.*;
 
 %%
@@ -30,21 +30,28 @@ SPACE=[\s\t]+
 COMMENT="//".*
 MULTILINE_COMMENT="/"\*.*\n\t\r\*"/"
 NUMBER=[0-9]+(\.[0-9]*)?
-STRING=(\"([^\"\\]|\\.)*\")
-VNAME=[a-zA-Z][a-zA-Z_\-0-9]*
+STRING=('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")
+VNAME=[:letter:][a-zA-Z_0-9]*
 
 %%
 <YYINITIAL> {
   {WHITE_SPACE}            { return WHITE_SPACE; }
 
+  ";"                      { return SEMI; }
+  "="                      { return EQ; }
   "{"                      { return LP; }
   "}"                      { return RP; }
+  "+"                      { return OP_1; }
+  "-"                      { return OP_2; }
+  "*"                      { return OP_3; }
+  "/"                      { return OP_4; }
+  "!"                      { return OP_5; }
   "true"                   { return TRUE; }
   "false"                  { return FALSE; }
   "null"                   { return NULL; }
-  "="                      { return EQ_SEPARATOR; }
   "var"                    { return VAR; }
   "EOL"                    { return EOL; }
+  "float"                  { return FLOAT; }
 
   {SPACE}                  { return SPACE; }
   {COMMENT}                { return COMMENT; }

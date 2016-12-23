@@ -13,33 +13,60 @@
     tokenTypeClass="com.kgb.js.psi.JSTokenType"
 
     tokens=[
-
+        SEMI=";"
+        EQ="="
         LP='{'
         RP='}'
+
+        op_1='+'
+        op_2='-'
+        op_3='*'
+        op_4='/'
+        op_5='!'
 
         space='regexp:[\s\t]+'
         comment='regexp://.*'
         multiline_comment='regexp:/\*.*\n\t\r\*/'
         number='regexp:\d+(\.\d*)?'
-        string="regexp:(\"([^\"\\]|\\.)*\")"
+        string="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")"
         TRUE="true"
         FALSE="false"
         NULL="null"
-        vname="regexp:[a-zA-Z][a-zA-Z_\-0-9]*"
-        EQ_SEPARATOR = "="
+        vname='regexp:\p{Alpha}\w*'
         var='var'
 
     ]
+
+    name(".*expr")='expression'
+    extends(".*expr")=expr
 }
 
 root ::= root_item *
 
-meta comma_separated_list ::= <<param>> (',' <<param>>) *
-meta semicolon_separated_list ::= <<param>> (';' <<param>>) *
-//root_item definition
+private root_item ::= var_declaration SEMI {pin=1 recoverWhile=property_recover}
 
-private root_item ::= file_body |COMMENT|EOL
-private file_body ::= <<semicolon_separated_list(json_object | var_declaration)>>
-json_object ::= LP SPACE* <<comma_separated_list(json_object | json_item)>> SPACE* RP
-json_item ::= var_declaration
-var_declaration ::= var? vname EQ_SEPARATOR string
+var_declaration ::= var? vname '=' expr {pin=3}
+private property_recover ::= !(';' | var? vname '=')
+
+//variable arithmetic
+expr ::= factor plus_expr *
+left plus_expr ::= plus_op factor
+private plus_op ::= op_1 | op_2
+private factor ::= primary mul_expr *
+left mul_expr ::= mul_op primary
+private mul_op ::= op_3 | op_4
+private primary ::= primary_inner factorial_expr ?
+left factorial_expr ::= op_5
+private primary_inner ::= literal_expr | ref_expr | paren_expr
+paren_expr ::= '(' expr ')' {pin=1}
+ref_expr ::= vname
+private literal_expr ::= number | string
+
+//meta comma_separated_list ::= <<param>> (',' <<param>>) *
+//meta semicolon_separated_list ::= <<param>> (';' <<param>>) *
+////root_item definition
+//
+//file_body ::= <<semicolon_separated_list(json_object | var_declaration)>>
+//json_object ::= LP SPACE* <<comma_separated_list(json_object | json_item)>> SPACE* RP
+//json_item ::= var_declaration
+
