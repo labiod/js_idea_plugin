@@ -2,7 +2,6 @@ package com.kgb.js.lexer;
 
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
-import org.intellij.grammar.psi.BnfTypes;
 
 import static com.intellij.psi.TokenType.BAD_CHARACTER;
 import static com.intellij.psi.TokenType.WHITE_SPACE;
@@ -41,17 +40,24 @@ VNAME=[:letter:][a-zA-Z_0-9]*
   "="                      { return EQ; }
   "{"                      { return LP; }
   "}"                      { return RP; }
+  "("                      { return LP2; }
+  ")"                      { return RP2; }
   "+"                      { return OP_1; }
   "-"                      { return OP_2; }
   "*"                      { return OP_3; }
   "/"                      { return OP_4; }
   "!"                      { return OP_5; }
+  ">"                      { return OP_6; }
+  "<"                      { return OP_7; }
   "true"                   { return TRUE; }
   "false"                  { return FALSE; }
   "null"                   { return NULL; }
+  "."                      { return VDOT; }
   "var"                    { return VAR; }
-  "EOL"                    { return EOL; }
-  "float"                  { return FLOAT; }
+  "function"               { return FUNCTION; }
+  "if"                     { return IF; }
+  "else"                   { return ELSE; }
+  "return"                 { return RETURN; }
 
   {SPACE}                  { return SPACE; }
   {COMMENT}                { return COMMENT; }

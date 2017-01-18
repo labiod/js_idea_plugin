@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class JSParserDefinition implements ParserDefinition {
     public static final TokenSet WHITE_SPACE = TokenSet.create(TokenType.WHITE_SPACE);
-    public static final TokenSet COMMENTS = TokenSet.create(JSTypes.COMMENT, JSTypes.MULTILINE_COMMENT);
+    public static final TokenSet COMMENTS = TokenSet.create(JSTypes.COMMENT);
     public static final TokenSet STRING_LITERAL = TokenSet.create(JSTypes.STRING);
 
     private static final  IFileElementType FILE = new IFileElementType(Language.findInstance(JSLanguage.class));

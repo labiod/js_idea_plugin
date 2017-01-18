@@ -6,9 +6,9 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by labiod : <labiod@wp.pl>
- * Class com.kgb.lisp.JSFileTypFactory
+ * Class com.kgb.lisp.JSFileTypeFactory
  */
-public class JSFileTypFactory extends FileTypeFactory {
+public class JSFileTypeFactory extends FileTypeFactory {
     @Override
     public void createFileTypes(@NotNull FileTypeConsumer fileTypeConsumer) {
         fileTypeConsumer.consume(JSFileType.INSTANCE, JSConstant.LANG_DEFAULT_EXTENSION);

@@ -17,12 +17,16 @@
         EQ="="
         LP='{'
         RP='}'
+        LP2='('
+        RP2=')'
 
         op_1='+'
         op_2='-'
         op_3='*'
         op_4='/'
         op_5='!'
+        op_6='>'
+        op_7='<'
 
         space='regexp:[\s\t]+'
         comment='regexp://.*'
@@ -33,8 +37,14 @@
         FALSE="false"
         NULL="null"
         vname='regexp:\p{Alpha}\w*'
-        var='var'
+        vdot='.'
 
+        // keywords
+        var='var'
+        function='function'
+        if='if'
+        else='else'
+        return='return'
     ]
 
     name(".*expr")='expression'
@@ -43,13 +53,16 @@
 
 root ::= root_item *
 
-private root_item ::= var_declaration SEMI {pin=1 recoverWhile=property_recover}
+private root_item ::= (var_declaration | function_def | function_call | if_statement | return_statement ) end_statement
+private end_statement ::= SEMI?
 
-var_declaration ::= var? vname '=' expr {pin=3}
+var_declaration ::= var? var_property '=' expr {pin=3 recoverWhile=property_recover}
+var_property ::= vname ('.' var_inner_prop)?
+private var_inner_prop ::= function_call | var_property
 private property_recover ::= !(';' | var? vname '=')
 
 //variable arithmetic
-expr ::= factor plus_expr *
+expr ::= (factor plus_expr * ) | inline_function_def
 left plus_expr ::= plus_op factor
 private plus_op ::= op_1 | op_2
 private factor ::= primary mul_expr *
@@ -59,14 +72,28 @@ private primary ::= primary_inner factorial_expr ?
 left factorial_expr ::= op_5
 private primary_inner ::= literal_expr | ref_expr | paren_expr
 paren_expr ::= '(' expr ')' {pin=1}
-ref_expr ::= vname
+ref_expr ::= var_property
 private literal_expr ::= number | string
 
-//meta comma_separated_list ::= <<param>> (',' <<param>>) *
-//meta semicolon_separated_list ::= <<param>> (';' <<param>>) *
-////root_item definition
-//
+//root_item definition
+function_def ::= function vname fun_args LP body RP
+function_call ::= vname fun_params
+inline_function_def ::= function fun_args LP body RP
+private fun_args ::= LP2 <<semicolon_separated_list(vname)>> RP2
+private fun_params ::= LP2 <<semicolon_separated_list(vname|string|number)>> RP2
+private body ::= root_item*
+
+if_statement ::= if SPACE* LP2 SPACE* conditions SPACE* RP2 SPACE* LP body RP else_if_statement*
+else_if_statement ::= (else if SPACE* LP2 SPACE* conditions SPACE* RP2 SPACE* LP body RP) | else_statement
+else_statement ::= else SPACE* LP body RP
+return_statement ::= return conditions
+
+conditions ::= expr | true | false | vname
+
+meta comma_separated_list ::= <<param>> (',' <<param>>) *
+meta semicolon_separated_list ::= <<param>> (';' <<param>>) *
 //file_body ::= <<semicolon_separated_list(json_object | var_declaration)>>
 //json_object ::= LP SPACE* <<comma_separated_list(json_object | json_item)>> SPACE* RP
 //json_item ::= var_declaration
+
 
