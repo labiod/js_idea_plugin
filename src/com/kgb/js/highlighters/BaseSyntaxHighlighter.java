@@ -26,9 +26,11 @@ public class BaseSyntaxHighlighter extends SyntaxHighlighterBase {
     public static final TextAttributesKey KEY =
             createTextAttributesKey("SIMPLE_KEY", DefaultLanguageHighlighterColors.KEYWORD);
     public static final TextAttributesKey VALUE =
-            createTextAttributesKey("SIMPLE_VALUE", DefaultLanguageHighlighterColors.STRING);
+            createTextAttributesKey("SIMPLE_VALUE", DefaultLanguageHighlighterColors.CONSTANT);
     public static final TextAttributesKey COMMENT =
             createTextAttributesKey("SIMPLE_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT);
+    public static final TextAttributesKey STRING =
+            createTextAttributesKey("SIMPLE_STRING", DefaultLanguageHighlighterColors.STRING);
     public static final TextAttributesKey BAD_CHARACTER =
             createTextAttributesKey("SIMPLE_BAD_CHARACTER", HighlighterColors.BAD_CHARACTER);
 
@@ -36,6 +38,7 @@ public class BaseSyntaxHighlighter extends SyntaxHighlighterBase {
     private static final TextAttributesKey[] SEPARATOR_KEYS = new TextAttributesKey[]{SEPARATOR};
     private static final TextAttributesKey[] KEY_KEYS = new TextAttributesKey[]{KEY};
     private static final TextAttributesKey[] VALUE_KEYS = new TextAttributesKey[]{VALUE};
+    private static final TextAttributesKey[] STRING_KEYS = new TextAttributesKey[]{STRING};
     private static final TextAttributesKey[] COMMENT_KEYS = new TextAttributesKey[]{COMMENT};
     private static final TextAttributesKey[] EMPTY_KEYS = new TextAttributesKey[0];
 
@@ -49,6 +52,8 @@ public class BaseSyntaxHighlighter extends SyntaxHighlighterBase {
         mKeywordsList.add(JSTypes.TRUE);
         mKeywordsList.add(JSTypes.FALSE);
         mKeywordsList.add(JSTypes.RETURN);
+        mKeywordsList.add(JSTypes.COMMA);
+        mKeywordsList.add(JSTypes.SEMI);
     }
 
     @NotNull
@@ -68,6 +73,8 @@ public class BaseSyntaxHighlighter extends SyntaxHighlighterBase {
             return VALUE_KEYS;
         } else if (tokenType.equals(JSTypes.COMMENT)) {
             return COMMENT_KEYS;
+        } else if (tokenType.equals(JSTypes.STRING)) {
+            return STRING_KEYS;
         } else if (tokenType.equals(TokenType.BAD_CHARACTER)) {
             return BAD_CHAR_KEYS;
         } else {

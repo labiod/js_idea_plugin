@@ -25,45 +25,54 @@ import static com.kgb.js.psi.JSTypes.*;
 EOL=\R
 WHITE_SPACE=\s+
 
+NUMBER=[0-9]+(\.[0-9]*)?
+STRING=('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")
 SPACE=[\s\t]+
 COMMENT="//".*
 MULTILINE_COMMENT="/"\*.*\n\t\r\*"/"
-NUMBER=[0-9]+(\.[0-9]*)?
-STRING=('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")
 VNAME=[:letter:][a-zA-Z_0-9]*
 
 %%
 <YYINITIAL> {
   {WHITE_SPACE}            { return WHITE_SPACE; }
 
-  ";"                      { return SEMI; }
   "="                      { return EQ; }
+  "=="                     { return EQ2; }
+  "==="                    { return EQ3; }
   "{"                      { return LP; }
   "}"                      { return RP; }
   "("                      { return LP2; }
   ")"                      { return RP2; }
+  "["                      { return LP3; }
+  "]"                      { return RP3; }
   "+"                      { return OP_1; }
   "-"                      { return OP_2; }
   "*"                      { return OP_3; }
   "/"                      { return OP_4; }
   "!"                      { return OP_5; }
   ">"                      { return OP_6; }
-  "<"                      { return OP_7; }
+  ">="                     { return OP_7; }
+  "<"                      { return OP_8; }
+  "<="                     { return OP_9; }
+  "&&"                     { return AND; }
+  "||"                     { return OR; }
+  ";"                      { return SEMI; }
+  ","                      { return COMMA; }
+  "."                      { return DOT; }
   "true"                   { return TRUE; }
   "false"                  { return FALSE; }
   "null"                   { return NULL; }
-  "."                      { return VDOT; }
   "var"                    { return VAR; }
   "function"               { return FUNCTION; }
   "if"                     { return IF; }
   "else"                   { return ELSE; }
   "return"                 { return RETURN; }
 
+  {NUMBER}                 { return NUMBER; }
+  {STRING}                 { return STRING; }
   {SPACE}                  { return SPACE; }
   {COMMENT}                { return COMMENT; }
   {MULTILINE_COMMENT}      { return MULTILINE_COMMENT; }
-  {NUMBER}                 { return NUMBER; }
-  {STRING}                 { return STRING; }
   {VNAME}                  { return VNAME; }
 
 }

@@ -13,12 +13,15 @@
     tokenTypeClass="com.kgb.js.psi.JSTokenType"
 
     tokens=[
-        SEMI=";"
         EQ="="
+        EQ2="=="
+        EQ3="==="
         LP='{'
         RP='}'
         LP2='('
         RP2=')'
+        LP3='['
+        RP3=']'
 
         op_1='+'
         op_2='-'
@@ -26,18 +29,27 @@
         op_4='/'
         op_5='!'
         op_6='>'
-        op_7='<'
+        op_7='>='
+        op_8='<'
+        op_9='<='
+
+        AND='&&'
+        OR='||'
+
+        number='regexp:\d+(\.\d*)?'
+        string="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")"
+        SEMI=";"
+        COMMA=","
+        DOT='.'
 
         space='regexp:[\s\t]+'
         comment='regexp://.*'
         multiline_comment='regexp:/\*.*\n\t\r\*/'
-        number='regexp:\d+(\.\d*)?'
-        string="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")"
+        vname='regexp:\p{Alpha}\w*'
+
         TRUE="true"
         FALSE="false"
         NULL="null"
-        vname='regexp:\p{Alpha}\w*'
-        vdot='.'
 
         // keywords
         var='var'
@@ -53,16 +65,16 @@
 
 root ::= root_item *
 
-private root_item ::= (var_declaration | function_def | function_call | if_statement | return_statement ) end_statement
+root_item ::= (function_def | function_call | if_statement | return_statement | var_declaration) end_statement
 private end_statement ::= SEMI?
 
 var_declaration ::= var? var_property '=' expr {pin=3 recoverWhile=property_recover}
-var_property ::= vname ('.' var_inner_prop)?
+var_property ::= vname (('.' var_inner_prop) | (LP3 (vname | number | string | true | false | null) RP3 ))?
 private var_inner_prop ::= function_call | var_property
 private property_recover ::= !(';' | var? vname '=')
 
 //variable arithmetic
-expr ::= (factor plus_expr * ) | inline_function_def
+expr ::= (factor plus_expr * ) | inline_function_def | array
 left plus_expr ::= plus_op factor
 private plus_op ::= op_1 | op_2
 private factor ::= primary mul_expr *
@@ -73,8 +85,9 @@ left factorial_expr ::= op_5
 private primary_inner ::= literal_expr | ref_expr | paren_expr
 paren_expr ::= '(' expr ')' {pin=1}
 ref_expr ::= var_property
-private literal_expr ::= number | string
+private literal_expr ::= number | string | true | false | null
 
+array ::= LP3 <<comma_separated_list(vname | number | string | true | false | null)>> RP3
 //root_item definition
 function_def ::= function vname fun_args LP body RP
 function_call ::= vname fun_params
@@ -83,15 +96,21 @@ private fun_args ::= LP2 <<semicolon_separated_list(vname)>> RP2
 private fun_params ::= LP2 <<semicolon_separated_list(vname|string|number)>> RP2
 private body ::= root_item*
 
-if_statement ::= if SPACE* LP2 SPACE* conditions SPACE* RP2 SPACE* LP body RP else_if_statement*
+if_statement ::= if LP2 SPACE* conditions SPACE* RP2 LP body RP else_if_statement*
 else_if_statement ::= (else if SPACE* LP2 SPACE* conditions SPACE* RP2 SPACE* LP body RP) | else_statement
 else_statement ::= else SPACE* LP body RP
 return_statement ::= return conditions
 
-conditions ::= expr | true | false | vname
+conditions ::= eq_expr | vname | true | false | string
+
+eq_expr ::= vname eq_st (vname | string | true | false | null )
+
+private eq_st ::= EQ | EQ2 | EQ3
 
 meta comma_separated_list ::= <<param>> (',' <<param>>) *
 meta semicolon_separated_list ::= <<param>> (';' <<param>>) *
+meta and_logic_separated_list ::= <<param>> ('&&' <<param>>) *
+meta or_logic_separated_list ::= <<param>> ('||' <<param>>) *
 //file_body ::= <<semicolon_separated_list(json_object | var_declaration)>>
 //json_object ::= LP SPACE* <<comma_separated_list(json_object | json_item)>> SPACE* RP
 //json_item ::= var_declaration
