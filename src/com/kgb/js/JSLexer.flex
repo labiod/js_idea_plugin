@@ -27,6 +27,7 @@ WHITE_SPACE=\s+
 
 NUMBER=[0-9]+(\.[0-9]*)?
 STRING=('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")
+NEWLINE=\n
 SPACE=[\s\t]+
 COMMENT="//".*
 MULTILINE_COMMENT="/"\*.*\n\t\r\*"/"
@@ -59,6 +60,8 @@ VNAME=[:letter:][a-zA-Z_0-9]*
   ";"                      { return SEMI; }
   ","                      { return COMMA; }
   "."                      { return DOT; }
+  "++"                     { return INCREMENT; }
+  "--"                     { return DECREMENT; }
   "true"                   { return TRUE; }
   "false"                  { return FALSE; }
   "null"                   { return NULL; }
@@ -66,10 +69,12 @@ VNAME=[:letter:][a-zA-Z_0-9]*
   "function"               { return FUNCTION; }
   "if"                     { return IF; }
   "else"                   { return ELSE; }
+  "for"                    { return FOR; }
   "return"                 { return RETURN; }
 
   {NUMBER}                 { return NUMBER; }
   {STRING}                 { return STRING; }
+  {NEWLINE}                { return NEWLINE; }
   {SPACE}                  { return SPACE; }
   {COMMENT}                { return COMMENT; }
   {MULTILINE_COMMENT}      { return MULTILINE_COMMENT; }
