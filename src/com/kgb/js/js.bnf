@@ -16,6 +16,12 @@
         EQ="="
         EQ2="=="
         EQ3="==="
+        DEQ="!="
+        DEQ2="!=="
+        PLUSEQ="+="
+        MINUSEQ="-="
+        MULEQ="*="
+        DIVEQ="/="
         LP='{'
         RP='}'
         LP2='('
@@ -39,6 +45,7 @@
         number='regexp:\d+(\.\d*)?'
         string="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")"
         SEMI=";"
+        COLON=":"
         COMMA=","
         DOT='.'
         INCREMENT='++'
@@ -58,8 +65,13 @@
         var='var'
         function='function'
         if='if'
+        t_if='?'
         else='else'
         for='for'
+        switch='switch'
+        case='case'
+        break='break'
+        default='default'
         return='return'
     ]
 
@@ -69,11 +81,13 @@
 
 root ::= root_item *
 
-private root_item ::= (function_def | function_call | if_statement | for_statement | return_statement | var_declaration | var_property) end_statement?
+private root_item ::= (ternary_block | function_def | function_call | var_declaration | var_property | js_statement) end_statement?
+private js_statement ::=  if_statement | for_statement | switch_def | return_statement
 private end_statement ::= SEMI
 
-var_declaration ::= var? var_property '=' expr
-var_property ::= (function_call | ref_expr) (('.' var_property) | (LP3 (vname | number | string | true | false | null) RP3 ))?
+var_declaration ::= var? var_property eq_op (ternary_block | expr)
+private eq_op ::= '=' | PLUSEQ | MINUSEQ | MULEQ | DIVEQ
+var_property ::= ((function_call | ref_expr) ('.' var_property)? )
 
 //variable arithmetic
 expr ::= (factor plus_expr * ) | function_def | array
@@ -86,41 +100,63 @@ private primary ::= primary_inner factorial_expr ?
 left factorial_expr ::= op_5
 private primary_inner ::= var_property | literal_expr | ref_expr | paren_expr
 paren_expr ::= '(' expr ')' {pin=1}
-ref_expr ::= vname (LP3 (vname | number | string | true | false | null) RP3 )?
-private literal_expr ::= number | string | true | false | null
+ref_expr ::= vname (LP3 (vname | base_type) RP3 )?
+private literal_expr ::= base_type
+//variable arithmetic end
 
-array ::= LP3 <<comma_separated_list(vname | number | string | true | false | null)>> RP3
+//condition expression
+cond ::= (factor_cond or_expr *)
+left or_expr ::= OR factor_cond
+private factor_cond ::= primary_cond and_expr *
+left and_expr ::= AND primary_cond
+private primary_cond ::= factorial_expr ? primary_inner_cond
+private primary_inner_cond ::= cond_expr | paren_cond_expr | var_property
+paren_cond_expr ::= '(' cond ')'
+//condition expression end
+
+array ::= LP3 <<comma_separated_list(vname | base_type)>> RP3
 //root_item definition
 function_def ::= function vname? fun_args LP body RP
 function_call ::= vname fun_params
-inline_function_def ::= function fun_args LP body RP
 private fun_args ::= LP2 <<comma_separated_list(vname)>>? RP2
-private fun_params ::= LP2 <<comma_separated_list(vname|string|number|true|false|null)>>? RP2
+private fun_params ::= LP2 <<comma_separated_list(ternary_block|function_call|expr|base_type|)>>? RP2
 private body ::= root_item*
 
-if_statement ::= if LP2 SPACE* conditions SPACE* RP2 LP body RP else_if_statement*
+if_statement ::= if LP2 SPACE* (ternary_block | cond) SPACE* RP2 LP body RP else_if_statement*
 else_if_statement ::= (else if SPACE* LP2 SPACE* conditions SPACE* RP2 SPACE* LP body RP) | else_statement
 else_statement ::= else SPACE* LP body RP
-return_statement ::= return conditions
-for_statement ::= for LP2 for_dec SEMI conditions SEMI for_inc RP2 LP body RP
-private for_dec ::= <<comma_separated_list(var_declaration)>>
+ternary_block ::= cond '?' (ternary_block | var_property | base_type) ':' (ternary_block | var_property | base_type)
+
+return_statement ::= return (ternary_block | cond)
+for_statement ::= for LP2 for_def SEMI conditions SEMI for_inc RP2 LP body RP
+switch_def ::= switch LP2 var_property RP2 LP switch_body RP
+private switch_body ::= case_block* default_block?
+case_block ::= case (base_type | vname) ':' body break_def?
+default_block ::= default ':' body
+private break_def ::= break ';'
+private for_def ::= <<comma_separated_list(var_declaration)>>
 private for_inc ::= <<comma_separated_list(var_inc_dec)>>
-private var_inc_dec ::= vname (INCREMENT | DECREMENT)
+private var_inc_dec ::= (vname (INCREMENT | DECREMENT)) | ((INCREMENT | DECREMENT) vname)
 
-conditions ::= '!'? (cond_expr | number | true | false | string | var_property)
+conditions ::= (<<and_or_logic_separated_list('!'? (and_cond | or_cond))>>)
+and_cond ::= (LP2 <<and_logic_separated_list('!'? (cond_expr | base_type | var_property ))>> RP2) |
+    (<<and_logic_separated_list('!'? (cond_expr | base_type | var_property ))>>)
 
-cond_expr ::= (var_property | string | true | false | null ) (eq_st | lw_st | gr_st) (var_property | string | true | false | null )
+or_cond ::= (LP2 <<or_logic_separated_list('!'? (cond_expr | base_type | var_property ))>> RP2) |
+                (<<or_logic_separated_list('!'? (cond_expr | base_type | var_property ))>>)
 
-private eq_st ::= EQ | EQ2 | EQ3
+cond_expr ::= (var_property | base_type) ((eq_st | lw_st | gr_st) (expr | var_property | base_type ))?
+
+private eq_st ::= EQ | EQ2 | EQ3 | DEQ | DEQ2
 private gr_st ::= op_6 | op_7
 private lw_st ::= op_8 | op_9
 
+base_type ::= number | string | true | false | null
+
 meta comma_separated_list ::= <<param>> (',' <<param>>) *
-meta semicolon_separated_list ::= <<param>> (';' <<param>>) *
 meta and_logic_separated_list ::= <<param>> ('&&' <<param>>) *
 meta or_logic_separated_list ::= <<param>> ('||' <<param>>) *
-//file_body ::= <<semicolon_separated_list(json_object | var_declaration)>>
-//json_object ::= LP SPACE* <<comma_separated_list(json_object | json_item)>> SPACE* RP
-//json_item ::= var_declaration
+meta and_or_logic_separated_list ::= <<param>> (and_or <<param>>) *
+private and_or ::= AND | OR
 
 

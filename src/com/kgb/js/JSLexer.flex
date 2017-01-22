@@ -23,11 +23,12 @@ import static com.kgb.js.psi.JSTypes.*;
 %unicode
 
 EOL=\R
+NEWLINE=\n
 WHITE_SPACE=\s+
 
 NUMBER=[0-9]+(\.[0-9]*)?
 STRING=('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")
-NEWLINE=\n
+
 SPACE=[\s\t]+
 COMMENT="//".*
 MULTILINE_COMMENT="/"\*.*\n\t\r\*"/"
@@ -36,10 +37,16 @@ VNAME=[:letter:][a-zA-Z_0-9]*
 %%
 <YYINITIAL> {
   {WHITE_SPACE}            { return WHITE_SPACE; }
+  {NEWLINE}                { return NEWLINE; }
 
   "="                      { return EQ; }
   "=="                     { return EQ2; }
   "==="                    { return EQ3; }
+  "!="                     { return DEQ; }
+  "+="                     { return PLUSEQ; }
+  "-="                     { return MINUSEQ; }
+  "*="                     { return MULEQ; }
+  "/="                     { return DIVEQ; }
   "{"                      { return LP; }
   "}"                      { return RP; }
   "("                      { return LP2; }
@@ -58,23 +65,29 @@ VNAME=[:letter:][a-zA-Z_0-9]*
   "&&"                     { return AND; }
   "||"                     { return OR; }
   ";"                      { return SEMI; }
+  ":"                      { return COLON; }
   ","                      { return COMMA; }
   "."                      { return DOT; }
   "++"                     { return INCREMENT; }
   "--"                     { return DECREMENT; }
+  "\\s+"                   { return WHITE_SPACE; }
   "true"                   { return TRUE; }
   "false"                  { return FALSE; }
   "null"                   { return NULL; }
   "var"                    { return VAR; }
   "function"               { return FUNCTION; }
   "if"                     { return IF; }
+  "?"                      { return T_IF; }
   "else"                   { return ELSE; }
   "for"                    { return FOR; }
+  "switch"                 { return SWITCH; }
+  "case"                   { return CASE; }
+  "break"                  { return BREAK; }
+  "default"                { return DEFAULT; }
   "return"                 { return RETURN; }
 
   {NUMBER}                 { return NUMBER; }
   {STRING}                 { return STRING; }
-  {NEWLINE}                { return NEWLINE; }
   {SPACE}                  { return SPACE; }
   {COMMENT}                { return COMMENT; }
   {MULTILINE_COMMENT}      { return MULTILINE_COMMENT; }

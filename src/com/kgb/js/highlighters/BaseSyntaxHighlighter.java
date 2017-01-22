@@ -55,6 +55,10 @@ public class BaseSyntaxHighlighter extends SyntaxHighlighterBase {
         mKeywordsList.add(JSTypes.COMMA);
         mKeywordsList.add(JSTypes.SEMI);
         mKeywordsList.add(JSTypes.FOR);
+        mKeywordsList.add(JSTypes.SWITCH);
+        mKeywordsList.add(JSTypes.CASE);
+        mKeywordsList.add(JSTypes.BREAK);
+        mKeywordsList.add(JSTypes.DEFAULT);
     }
 
     @NotNull

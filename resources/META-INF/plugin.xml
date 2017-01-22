@@ -43,6 +43,7 @@
     <fileTypeFactory implementation="com.kgb.js.JSFileTypeFactory" />
     <lang.parserDefinition language="JS" implementationClass="com.kgb.js.parser.JSParserDefinition" />
     <lang.syntaxHighlighterFactory language="JS" implementationClass="com.kgb.js.highlighters.BaseSynthaxHighlighterFactory" />
+    <lang.commenter language="JS" implementationClass="com.kgb.js.lang.feature.JSCommenter" />
 
     <!-- Annotators -->
     <!--<annotator language="Javascript" implementationClass="com.kgb.lisp.annotators.LispDefFunAnnotator" />-->
@@ -63,6 +64,9 @@
 
   <actions>
     <!-- Add your actions here -->
+    <action id="js_new_file" class="com.kgb.js.actions.JsNewFileAction" text="Js file">
+      <add-to-group group-id="NewGroup" anchor="first"/>
+    </action>
   </actions>
 
 </idea-plugin>
