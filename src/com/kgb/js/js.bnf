@@ -34,6 +34,7 @@
         op_3='*'
         op_4='/'
         op_5='!'
+        op_10='%'
         op_6='>'
         op_7='>='
         op_8='<'
@@ -73,6 +74,8 @@
         break='break'
         default='default'
         return='return'
+        while='while'
+        do='do'
     ]
 
     name(".*expr")='expression'
@@ -82,7 +85,7 @@
 root ::= root_item *
 
 private root_item ::= (ternary_block | function_def | function_call | var_declaration | var_property | js_statement) end_statement?
-private js_statement ::=  if_statement | for_statement | switch_def | return_statement
+private js_statement ::=  if_statement | for_statement | switch_def | return_statement | while_statement | do_while_statement
 private end_statement ::= SEMI
 
 var_declaration ::= var? var_property eq_op (ternary_block | expr)
@@ -95,22 +98,22 @@ left plus_expr ::= plus_op factor
 private plus_op ::= op_1 | op_2
 private factor ::= primary mul_expr *
 left mul_expr ::= mul_op primary
-private mul_op ::= op_3 | op_4
+private mul_op ::= op_3 | op_4 | op_10
 private primary ::= primary_inner factorial_expr ?
 left factorial_expr ::= op_5
 private primary_inner ::= var_property | literal_expr | ref_expr | paren_expr
 paren_expr ::= '(' expr ')' {pin=1}
-ref_expr ::= vname (LP3 (vname | base_type) RP3 )?
+ref_expr ::= var_inc_dec | (vname (LP3 (vname | base_type) RP3 )?)
 private literal_expr ::= base_type
 //variable arithmetic end
 
 //condition expression
-cond ::= (factor_cond or_expr *)
+cond ::= factor_cond or_expr *
 left or_expr ::= OR factor_cond
 private factor_cond ::= primary_cond and_expr *
 left and_expr ::= AND primary_cond
 private primary_cond ::= factorial_expr ? primary_inner_cond
-private primary_inner_cond ::= cond_expr | paren_cond_expr | var_property
+private primary_inner_cond ::= expr | cond_expr | paren_cond_expr | var_property
 paren_cond_expr ::= '(' cond ')'
 //condition expression end
 
@@ -123,27 +126,23 @@ private fun_params ::= LP2 <<comma_separated_list(ternary_block|function_call|ex
 private body ::= root_item*
 
 if_statement ::= if LP2 SPACE* (ternary_block | cond) SPACE* RP2 LP body RP else_if_statement*
-else_if_statement ::= (else if SPACE* LP2 SPACE* conditions SPACE* RP2 SPACE* LP body RP) | else_statement
+else_if_statement ::= (else if SPACE* LP2 SPACE* (ternary_block | cond) SPACE* RP2 SPACE* LP body RP) | else_statement
 else_statement ::= else SPACE* LP body RP
 ternary_block ::= cond '?' (ternary_block | var_property | base_type) ':' (ternary_block | var_property | base_type)
 
 return_statement ::= return (ternary_block | cond)
-for_statement ::= for LP2 for_def SEMI conditions SEMI for_inc RP2 LP body RP
+for_statement ::= for LP2 for_init SEMI cond SEMI for_final_expr RP2 LP body RP
 switch_def ::= switch LP2 var_property RP2 LP switch_body RP
 private switch_body ::= case_block* default_block?
 case_block ::= case (base_type | vname) ':' body break_def?
 default_block ::= default ':' body
 private break_def ::= break ';'
-private for_def ::= <<comma_separated_list(var_declaration)>>
-private for_inc ::= <<comma_separated_list(var_inc_dec)>>
-private var_inc_dec ::= (vname (INCREMENT | DECREMENT)) | ((INCREMENT | DECREMENT) vname)
+private for_init ::= <<comma_separated_list(var_declaration)>>
+private for_final_expr ::= <<comma_separated_list(var_inc_dec)>>
+var_inc_dec ::= (vname (INCREMENT | DECREMENT)) | ((INCREMENT | DECREMENT) vname)
 
-conditions ::= (<<and_or_logic_separated_list('!'? (and_cond | or_cond))>>)
-and_cond ::= (LP2 <<and_logic_separated_list('!'? (cond_expr | base_type | var_property ))>> RP2) |
-    (<<and_logic_separated_list('!'? (cond_expr | base_type | var_property ))>>)
-
-or_cond ::= (LP2 <<or_logic_separated_list('!'? (cond_expr | base_type | var_property ))>> RP2) |
-                (<<or_logic_separated_list('!'? (cond_expr | base_type | var_property ))>>)
+while_statement ::= while LP2 (ternary_block | cond) RP2 LP body RP
+do_while_statement ::= do LP body RP while LP2 (ternary_block | cond) RP2
 
 cond_expr ::= (var_property | base_type) ((eq_st | lw_st | gr_st) (expr | var_property | base_type ))?
 
@@ -154,9 +153,3 @@ private lw_st ::= op_8 | op_9
 base_type ::= number | string | true | false | null
 
 meta comma_separated_list ::= <<param>> (',' <<param>>) *
-meta and_logic_separated_list ::= <<param>> ('&&' <<param>>) *
-meta or_logic_separated_list ::= <<param>> ('||' <<param>>) *
-meta and_or_logic_separated_list ::= <<param>> (and_or <<param>>) *
-private and_or ::= AND | OR
-
-

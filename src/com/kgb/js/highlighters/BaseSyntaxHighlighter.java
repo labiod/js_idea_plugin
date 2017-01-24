@@ -18,7 +18,9 @@ import java.util.List;
 import static com.intellij.openapi.editor.colors.TextAttributesKey.createTextAttributesKey;
 
 /**
- * Created by k.betlej on 1/12/17.
+ * @author labiod : <labiod@wp.pl>;
+ * @version 0.0.1; created:22.01.2017
+ * Class com.kgb.js.highlighters.BaseSyntaxHighlighter
  */
 public class BaseSyntaxHighlighter extends SyntaxHighlighterBase {
     public static final TextAttributesKey SEPARATOR =
@@ -59,6 +61,9 @@ public class BaseSyntaxHighlighter extends SyntaxHighlighterBase {
         mKeywordsList.add(JSTypes.CASE);
         mKeywordsList.add(JSTypes.BREAK);
         mKeywordsList.add(JSTypes.DEFAULT);
+        mKeywordsList.add(JSTypes.T_IF);
+        mKeywordsList.add(JSTypes.WHILE);
+        mKeywordsList.add(JSTypes.DO);
     }
 
     @NotNull

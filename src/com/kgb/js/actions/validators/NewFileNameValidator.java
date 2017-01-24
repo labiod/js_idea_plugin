@@ -1,11 +1,11 @@
-package com.kgb.js.actions;
+package com.kgb.js.actions.validators;
 
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.vfs.VirtualFile;
 
 /**
- * Created by Jan on 21.01.2017.
+ * @author  labiod <labiod@w.pl>
+ * @version 0.0.1; created 21.01.2017
  */
 public class NewFileNameValidator implements InputValidator {
 
