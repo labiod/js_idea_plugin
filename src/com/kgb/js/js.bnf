@@ -90,10 +90,10 @@ private end_statement ::= SEMI
 
 var_declaration ::= var? var_property eq_op (ternary_block | expr)
 private eq_op ::= '=' | PLUSEQ | MINUSEQ | MULEQ | DIVEQ
-var_property ::= ((function_call | ref_expr) ('.' var_property)? )
+var_property ::= ((function_call | ref_expr | array) ('.' var_property)? )
 
 //variable arithmetic
-expr ::= (factor plus_expr * ) | function_def | array
+expr ::= factor plus_expr *
 left plus_expr ::= plus_op factor
 private plus_op ::= op_1 | op_2
 private factor ::= primary mul_expr *
@@ -101,8 +101,8 @@ left mul_expr ::= mul_op primary
 private mul_op ::= op_3 | op_4 | op_10
 private primary ::= primary_inner factorial_expr ?
 left factorial_expr ::= op_5
-private primary_inner ::= var_property | literal_expr | ref_expr | paren_expr
-paren_expr ::= '(' expr ')' {pin=1}
+private primary_inner ::= paren_expr | var_property | literal_expr | ref_expr
+paren_expr ::= LP2 expr RP2
 ref_expr ::= var_inc_dec | (vname (LP3 (vname | base_type) RP3 )?)
 private literal_expr ::= base_type
 //variable arithmetic end
@@ -113,8 +113,8 @@ left or_expr ::= OR factor_cond
 private factor_cond ::= primary_cond and_expr *
 left and_expr ::= AND primary_cond
 private primary_cond ::= factorial_expr ? primary_inner_cond
-private primary_inner_cond ::= expr | cond_expr | paren_cond_expr | var_property
-paren_cond_expr ::= '(' cond ')'
+private primary_inner_cond ::= paren_cond_expr | cond_expr | expr
+paren_cond_expr ::= LP2 cond RP2
 //condition expression end
 
 array ::= LP3 <<comma_separated_list(vname | base_type)>> RP3
@@ -144,7 +144,7 @@ var_inc_dec ::= (vname (INCREMENT | DECREMENT)) | ((INCREMENT | DECREMENT) vname
 while_statement ::= while LP2 (ternary_block | cond) RP2 LP body RP
 do_while_statement ::= do LP body RP while LP2 (ternary_block | cond) RP2
 
-cond_expr ::= (var_property | base_type) ((eq_st | lw_st | gr_st) (expr | var_property | base_type ))?
+cond_expr ::= expr (eq_st | lw_st | gr_st) expr
 
 private eq_st ::= EQ | EQ2 | EQ3 | DEQ | DEQ2
 private gr_st ::= op_6 | op_7
