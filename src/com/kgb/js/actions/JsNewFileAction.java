@@ -1,7 +1,9 @@
 package com.kgb.js.actions;
 
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.Messages;
@@ -50,7 +52,18 @@ public class JsNewFileAction extends AnAction {
         try {
             if (file.createNewFile()) {
                 System.out.println(file.getPath());
-                project.getBaseDir().refresh(true, true);
+                String finalFileName = fileName;
+                VirtualFile finalSelectedFile = selectedFile;
+                project.getBaseDir().refresh(true, true, () -> {
+                    for (VirtualFile virtualFile : finalSelectedFile.getChildren()) {
+                        if (virtualFile.getName().equals(finalFileName)) {
+                            System.out.println(virtualFile.getName());
+                            new OpenFileDescriptor(project, virtualFile).navigate(true);
+                        }
+                    }
+
+                });
+
             }
         } catch (IOException e) {
             e.printStackTrace();
