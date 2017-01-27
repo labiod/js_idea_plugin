@@ -113,7 +113,7 @@ left or_expr ::= OR factor_cond
 private factor_cond ::= primary_cond and_expr *
 left and_expr ::= AND primary_cond
 private primary_cond ::= factorial_expr ? primary_inner_cond
-private primary_inner_cond ::= expr | cond_expr | paren_cond_expr | var_property
+private primary_inner_cond ::= cond_expr | paren_cond_expr | var_property
 paren_cond_expr ::= '(' cond ')'
 //condition expression end
 
@@ -144,7 +144,7 @@ var_inc_dec ::= (vname (INCREMENT | DECREMENT)) | ((INCREMENT | DECREMENT) vname
 while_statement ::= while LP2 (ternary_block | cond) RP2 LP body RP
 do_while_statement ::= do LP body RP while LP2 (ternary_block | cond) RP2
 
-cond_expr ::= (var_property | base_type) ((eq_st | lw_st | gr_st) (expr | var_property | base_type ))?
+cond_expr ::= (expr | var_property | base_type) ((eq_st | lw_st | gr_st) (expr | var_property | base_type ))?
 
 private eq_st ::= EQ | EQ2 | EQ3 | DEQ | DEQ2
 private gr_st ::= op_6 | op_7
