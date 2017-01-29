@@ -102,7 +102,6 @@ private mul_op ::= op_3 | op_4 | op_10
 private primary ::= primary_inner factorial_expr ?
 left factorial_expr ::= op_5
 private primary_inner ::= var_property | literal_expr | ref_expr | parent
-//parent_expr ::= '(' expr ')' {pin=1}
 parent ::= '(' (cond | expr) ')' {pin=1}
 ref_expr ::= var_inc_dec | (vname (LP3 (vname | base_type) RP3 )?)
 private literal_expr ::= base_type
@@ -115,8 +114,6 @@ private factor_cond ::= primary_cond and_expr *
 left and_expr ::= AND primary_cond
 private primary_cond ::= factorial_expr ? primary_inner_cond
 private primary_inner_cond ::=  cond_expr | parent
-//parent_cond ::= '(' cond ')'
-//condition expression end
 
 array ::= LP3 <<comma_separated_list(vname | base_type)>> RP3
 //root_item definition
