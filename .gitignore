@@ -1,3 +1,5 @@
 /gen
 .idea
 /out
+/src/*.jar
+/src/idea-flex.skeleton
