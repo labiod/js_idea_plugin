@@ -1,5 +1,6 @@
 package com.kgb.js;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,6 +39,6 @@ public class JSFileType extends LanguageFileType {
     @Nullable
     @Override
     public Icon getIcon() {
-        return JsIcons.FILE_ICON;
+        return AllIcons.FileTypes.JavaScript;
     }
 }

@@ -12,13 +12,14 @@
       <h3>Version 0.01<h3>
       <h4>ASSEMBLER version</h4>
       <ul>
-        <li>Add basic support for keywords:
+        <li>Add keywords:
           <ul>
             <li>var</li>
             <li>function</li>
             <li>new</li>
             <li>for</li>
             <li>while</li>
+            <li>do</li>
             <li>if</li>
             <li>else</li>
           </ul>
@@ -39,9 +40,10 @@
   -->
   <extensions defaultExtensionNs="com.intellij">
     <!-- Add your extensions here -->
-    <fileTypeFactory implementation="com.kgb.js.JSFileTypFactory" />
+    <fileTypeFactory implementation="com.kgb.js.JSFileTypeFactory" />
     <lang.parserDefinition language="JS" implementationClass="com.kgb.js.parser.JSParserDefinition" />
-    <!--<lang.syntaxHighlighterFactory language="Javascript" implementationClass="com.kgb.js.codestyle.LispSynthaxHighlighterFactory" />-->
+    <lang.syntaxHighlighterFactory language="JS" implementationClass="com.kgb.js.highlighters.BaseSynthaxHighlighterFactory" />
+    <lang.commenter language="JS" implementationClass="com.kgb.js.lang.feature.JSCommenter" />
 
     <!-- Annotators -->
     <!--<annotator language="Javascript" implementationClass="com.kgb.lisp.annotators.LispDefFunAnnotator" />-->
@@ -62,6 +64,9 @@
 
   <actions>
     <!-- Add your actions here -->
+    <action id="js_new_file" class="com.kgb.js.actions.JsNewFileAction" text="Js file">
+      <add-to-group group-id="NewGroup" anchor="first"/>
+    </action>
   </actions>
 
 </idea-plugin>

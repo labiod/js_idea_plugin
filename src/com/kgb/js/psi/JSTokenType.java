@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by labiod : <labiod@wp.pl>
- * Class com.kgb.lisp.psi.LispTokenType
+ * Class com.kgb.lisp.psi.JSTokenType
  */
 public class JSTokenType extends IElementType {
     public JSTokenType(@NotNull @NonNls String debugName) {
