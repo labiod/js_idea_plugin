@@ -76,6 +76,7 @@
         return='return'
         while='while'
         do='do'
+        this="this"
     ]
 
     name(".*expr")='expression'
@@ -84,11 +85,11 @@
 
 root ::= root_item *
 
-private root_item ::= (ternary_block | function_def | function_call | var_declaration | var_property | js_statement) end_statement?
+private root_item ::= (ternary_block | function_def | function_call | var_declaration | this_type | var_property | js_statement) end_statement?
 private js_statement ::=  if_statement | for_statement | switch_def | return_statement | while_statement | do_while_statement
 private end_statement ::= SEMI
 
-var_declaration ::= var? var_property eq_op (ternary_block | expr)
+var_declaration ::= ((var? var_property) | this_type) eq_op (object_create | ternary_block | expr)
 private eq_op ::= '=' | PLUSEQ | MINUSEQ | MULEQ | DIVEQ
 var_property ::= ((function_call | ref_expr | array) ('.' var_property)? )
 
@@ -101,9 +102,10 @@ left mul_expr ::= mul_op primary
 private mul_op ::= op_3 | op_4 | op_10
 private primary ::= primary_inner factorial_expr ?
 left factorial_expr ::= op_5
-private primary_inner ::= var_property | literal_expr | ref_expr | parent
+private primary_inner ::= this_type | var_property | function_def | literal_expr | ref_expr | object | parent
 parent ::= '(' (cond | expr) ')' {pin=1}
 ref_expr ::= var_inc_dec | (vname (LP3 (vname | base_type) RP3 )?)
+this_type ::= this ( '.' var_property)?
 private literal_expr ::= base_type
 //variable arithmetic end
 
@@ -128,7 +130,7 @@ else_if_statement ::= (else if LP2 (ternary_block | cond) RP2 LP body RP) | else
 else_statement ::= else LP body RP
 ternary_block ::= cond '?' (ternary_block | var_property | base_type) ':' (ternary_block | var_property | base_type)
 
-return_statement ::= return (ternary_block | cond)
+return_statement ::= return (expr | ternary_block | cond)
 for_statement ::= for LP2 for_init SEMI cond SEMI for_final_expr RP2 LP body RP
 switch_def ::= switch LP2 var_property RP2 LP switch_body RP
 private switch_body ::= case_block* default_block?
@@ -147,6 +149,11 @@ cond_expr ::= expr ((eq_st | lw_st | gr_st) expr)?
 private eq_st ::= EQ | EQ2 | EQ3 | DEQ | DEQ2
 private gr_st ::= op_6 | op_7
 private lw_st ::= op_8 | op_9
+
+object ::= LP object_fields? RP
+object_create ::= new vname LP2 fun_args RP2
+private object_fields ::= <<comma_separated_list(object_field)>>
+object_field ::= vname (COLON expr)?
 
 base_type ::= number | string | true | false | null
 

@@ -14,6 +14,6 @@ public class BaseSynthaxHighlighterFactory extends SyntaxHighlighterFactory {
     @NotNull
     @Override
     public SyntaxHighlighter getSyntaxHighlighter(@Nullable Project project, @Nullable VirtualFile virtualFile) {
-        return new BaseSyntaxHighlighter();
+        return new JSSyntaxHighlighter();
     }
 }

@@ -20,15 +20,15 @@ import static com.intellij.openapi.editor.colors.TextAttributesKey.createTextAtt
 /**
  * @author labiod : <labiod@wp.pl>;
  * @version 0.0.1; created:22.01.2017
- * Class com.kgb.js.highlighters.BaseSyntaxHighlighter
+ * Class com.kgb.js.highlighters.JSSyntaxHighlighter
  */
-public class BaseSyntaxHighlighter extends SyntaxHighlighterBase {
+public class JSSyntaxHighlighter extends SyntaxHighlighterBase {
     public static final TextAttributesKey SEPARATOR =
             createTextAttributesKey("SIMPLE_SEPARATOR", DefaultLanguageHighlighterColors.OPERATION_SIGN);
     public static final TextAttributesKey KEY =
             createTextAttributesKey("SIMPLE_KEY", DefaultLanguageHighlighterColors.KEYWORD);
     public static final TextAttributesKey VALUE =
-            createTextAttributesKey("SIMPLE_VALUE", DefaultLanguageHighlighterColors.CONSTANT);
+            createTextAttributesKey("SIMPLE_VALUE", DefaultLanguageHighlighterColors.NUMBER);
     public static final TextAttributesKey COMMENT =
             createTextAttributesKey("SIMPLE_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT);
     public static final TextAttributesKey STRING =
@@ -46,7 +46,7 @@ public class BaseSyntaxHighlighter extends SyntaxHighlighterBase {
 
     private List<IElementType> mKeywordsList = new ArrayList<>();
 
-    public BaseSyntaxHighlighter () {
+    public JSSyntaxHighlighter() {
         mKeywordsList.add(JSTypes.VAR);
         mKeywordsList.add(JSTypes.FUNCTION);
         mKeywordsList.add(JSTypes.IF);
@@ -64,6 +64,8 @@ public class BaseSyntaxHighlighter extends SyntaxHighlighterBase {
         mKeywordsList.add(JSTypes.T_IF);
         mKeywordsList.add(JSTypes.WHILE);
         mKeywordsList.add(JSTypes.DO);
+        mKeywordsList.add(JSTypes.THIS);
+        mKeywordsList.add(JSTypes.COLON);
     }
 
     @NotNull
