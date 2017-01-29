@@ -77,6 +77,7 @@
         while='while'
         do='do'
         this="this"
+        new="new"
     ]
 
     name(".*expr")='expression'
@@ -85,13 +86,13 @@
 
 root ::= root_item *
 
-private root_item ::= (ternary_block | function_def | function_call | var_declaration | this_type | var_property | js_statement) end_statement?
+private root_item ::= (ternary_block | function_def | function_call | var_declaration | this_type | object | var_property | js_statement) end_statement?
 private js_statement ::=  if_statement | for_statement | switch_def | return_statement | while_statement | do_while_statement
 private end_statement ::= SEMI
 
-var_declaration ::= ((var? var_property) | this_type) eq_op (object_create | ternary_block | expr)
+var_declaration ::= ((var? var_property) | this_type) (eq_op (object_create | ternary_block | expr))?
 private eq_op ::= '=' | PLUSEQ | MINUSEQ | MULEQ | DIVEQ
-var_property ::= ((function_call | ref_expr | array) ('.' var_property)? )
+var_property ::= (string | function_call | ref_expr | array) ('.' var_property)?
 
 //variable arithmetic
 expr ::= factor plus_expr *
@@ -117,12 +118,12 @@ left and_expr ::= AND primary_cond
 private primary_cond ::= factorial_expr ? primary_inner_cond
 private primary_inner_cond ::=  cond_expr | parent
 
-array ::= LP3 <<comma_separated_list(vname | base_type)>> RP3
+array ::= LP3 <<comma_separated_list(object | vname | base_type)>> RP3
 //root_item definition
 function_def ::= function vname? fun_args LP body RP
-function_call ::= vname fun_params
+function_call ::= vname LP2 fun_params? RP2
 private fun_args ::= LP2 <<comma_separated_list(vname)>>? RP2
-private fun_params ::= LP2 <<comma_separated_list(ternary_block|function_call|expr|base_type|)>>? RP2
+private fun_params ::= <<comma_separated_list(ternary_block|function_call|expr|base_type|)>>
 private body ::= root_item*
 
 if_statement ::= if LP2 (ternary_block | cond) RP2 LP body RP else_if_statement*
@@ -151,9 +152,9 @@ private gr_st ::= op_6 | op_7
 private lw_st ::= op_8 | op_9
 
 object ::= LP object_fields? RP
-object_create ::= new vname LP2 fun_args RP2
+object_create ::= new vname LP2 fun_params? RP2
 private object_fields ::= <<comma_separated_list(object_field)>>
-object_field ::= vname (COLON expr)?
+object_field ::= (vname | string) (COLON expr)?
 
 base_type ::= number | string | true | false | null
 

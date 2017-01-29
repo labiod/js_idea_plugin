@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Created by k.betlej on 1/12/17.
  */
-public class BaseSynthaxHighlighterFactory extends SyntaxHighlighterFactory {
+public class JSSyntaxHighlighterFactory extends SyntaxHighlighterFactory {
     @NotNull
     @Override
     public SyntaxHighlighter getSyntaxHighlighter(@Nullable Project project, @Nullable VirtualFile virtualFile) {

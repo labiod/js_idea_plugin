@@ -66,6 +66,7 @@ public class JSSyntaxHighlighter extends SyntaxHighlighterBase {
         mKeywordsList.add(JSTypes.DO);
         mKeywordsList.add(JSTypes.THIS);
         mKeywordsList.add(JSTypes.COLON);
+        mKeywordsList.add(JSTypes.NEW);
     }
 
     @NotNull

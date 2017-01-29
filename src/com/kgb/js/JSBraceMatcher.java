@@ -14,6 +14,8 @@ import org.jetbrains.annotations.Nullable;
 public class JSBraceMatcher implements PairedBraceMatcher {
     private static BracePair[] PAIR = new BracePair[] {
             new BracePair(JSTypes.LP, JSTypes.RP, false),
+            new BracePair(JSTypes.LP2, JSTypes.RP2, false),
+            new BracePair(JSTypes.LP3, JSTypes.RP3, false),
     };
     @Override
     public BracePair[] getPairs() {
