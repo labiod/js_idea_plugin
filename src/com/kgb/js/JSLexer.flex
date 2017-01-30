@@ -86,6 +86,8 @@ VNAME=[:letter:][a-zA-Z_0-9]*
   "return"                 { return RETURN; }
   "while"                  { return WHILE; }
   "do"                     { return DO; }
+  "this"                   { return THIS; }
+  "new"                    { return NEW; }
 
   {NUMBER}                 { return NUMBER; }
   {STRING}                 { return STRING; }
