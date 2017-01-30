@@ -46,10 +46,10 @@
     <lang.commenter language="JS" implementationClass="com.kgb.js.lang.feature.JSCommenter" />
 
     <!-- Annotators -->
-    <!--<annotator language="Javascript" implementationClass="com.kgb.lisp.annotators.LispDefFunAnnotator" />-->
+    <annotator language="JS" implementationClass="com.kgb.js.annotators.JSPropertyAnnotator" />
     <!--<annotator language="Javascript" implementationClass="com.kgb.lisp.annotators.LispPropertyAnnotator" />-->
     <!-- Settings pages -->
-    <!--<colorSettingsPage implementation="com.kgb.lisp.settings.LispColorSettingsPage" />-->
+    <colorSettingsPage implementation="com.kgb.js.settings.JSColorSettingsPage" />
 
     <!-- line markers -->
     <!--<codeInsight.lineMarkerProvider language="Javascript" implementationClass="com.kgb.lisp.linemarkers.LineMarkerProvider" />-->

@@ -1,6 +1,7 @@
 {
     parserClass="com.kgb.js.parser.JSParser"
-//    parserUtilClass="com.kgb.lisp.parser.LispParserUtil"
+
+    extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
 
     psiClassPrefix="JS"
     psiImplClassSuffix="Impl"
@@ -11,6 +12,9 @@
     elementTypeHolderClass="com.kgb.js.psi.JSTypes"
     elementTypeClass="com.kgb.js.psi.JSElementType"
     tokenTypeClass="com.kgb.js.psi.JSTokenType"
+
+    psiImplUtilClass="com.kgb.js.psi.impl.JSPsiImplUtil"
+//    parserUtilClass="com.kgb.js.parser.JSPsiImplUtil"
 
     tokens=[
         EQ="="
@@ -90,7 +94,9 @@ private root_item ::= (ternary_block | function_def | function_call | var_declar
 private js_statement ::=  if_statement | for_statement | switch_def | return_statement | while_statement | do_while_statement
 private end_statement ::= SEMI
 
-var_declaration ::= ((var? var_property) | this_type) (eq_op (object_create | ternary_block | expr))?
+var_declaration ::= var_name (eq_op var_value)? {methods=[getVar getValue]}
+var_name ::= ((var? var_property) | this_type)
+var_value ::= (object_create | ternary_block | expr)
 private eq_op ::= '=' | PLUSEQ | MINUSEQ | MULEQ | DIVEQ
 var_property ::= (string | function_call | ref_expr | array) ('.' var_property)?
 
