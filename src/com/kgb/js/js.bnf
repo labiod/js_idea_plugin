@@ -94,11 +94,11 @@ private root_item ::= (ternary_block | function_def | function_call | var_declar
 private js_statement ::=  if_statement | for_statement | switch_def | return_statement | while_statement | do_while_statement
 private end_statement ::= SEMI
 
-var_declaration ::= var_name (eq_op var_value)? {methods=[getVar getValue]}
+var_declaration ::= var_name eq_op var_value {methods=[getVar getValue]}
 var_name ::= ((var? var_property) | this_type)
 var_value ::= (object_create | ternary_block | expr)
 private eq_op ::= '=' | PLUSEQ | MINUSEQ | MULEQ | DIVEQ
-var_property ::= (string | function_call | ref_expr | array) ('.' var_property)?
+var_property ::= <<dot_separated_list(string | function_call | ref_expr | array)>>
 
 //variable arithmetic
 expr ::= factor plus_expr *
@@ -165,3 +165,4 @@ object_field ::= (vname | string) (COLON expr)?
 base_type ::= number | string | true | false | null
 
 meta comma_separated_list ::= <<param>> (',' <<param>>) *
+meta dot_separated_list ::= <<param>> ('.' <<param>>) *
