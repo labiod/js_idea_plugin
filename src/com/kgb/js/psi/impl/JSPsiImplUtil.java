@@ -1,26 +1,115 @@
 package com.kgb.js.psi.impl;
 
-import com.kgb.js.psi.JSVarDeclaration;
-import com.kgb.js.psi.JSVarName;
-import com.kgb.js.psi.JSVarValue;
+import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.impl.PsiImplUtil;
+import com.kgb.js.psi.*;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Krzysztof Betlej <labiod@wp.pl>
  *         Date: 1/30/17.
  */
 public class JSPsiImplUtil {
-    public static String getVar(JSVarDeclaration element) {
-        JSVarName var = element.getVarName();
-        if (var.getVarProperty() != null) {
-            return var.getVarProperty().getText().replace("\\\\ ", " ");
-        } else if (var.getThisType() != null){
-            return var.getThisType().getText().replace("\\\\ ", " ");
+//    public static String getVar(JSDeclaration element) {
+//        String var = element.getName();
+//        if (var != null) {
+//            return var.replace("\\\\ ", " ");
+//        }
+//        return null;
+//    }
+//
+//    public static PsiElement getValue(JSVarDeclaration element) {
+//        if (element instanceof JSGlobalVar) {
+//            return ((JSGlobalVar) element).getVarValue();
+//        } else if (element instanceof JSFunctionVar){
+//            return ((JSFunctionVar) element).getAnimFunctionDef();
+//        } else {
+//            return ((JSObjectVar)element).getObjectDef();
+//        }
+//    }
+//
+//    public static String getName(JSDeclaration declaration) {
+//        if (declaration instanceof JSVarDeclaration) {
+//            return ((JSVarDeclaration) declaration).getVarName().getText();
+//        } else {
+//            return ((JSFunctionDeclaration) declaration).getNameIdentifier().getText();
+//        }
+//    }
+//
+//    public static PsiElement getVarName(JSVarDeclaration declaration) {
+//        if (declaration instanceof JSGlobalVar) {
+//            return ((JSGlobalVar) declaration).getVarName();
+//        } else if (declaration instanceof JSFunctionVar) {
+//            return ((JSFunctionVar) declaration).getNameIdentifier();
+//        } else if (declaration instanceof JSObjectVar){
+//            return ((JSObjectVar) declaration).getNameIdentifier();
+//        } else {
+//            return ((JSFieldVar)declaration).getFieldName();
+//        }
+//    }
+//
+//    public static PsiFile getVirtualFile(Project project, PsiElement element) {
+//        ASTNode parent = element.getNode().getTreeParent();
+//        while (parent.getTreeParent() != null) {
+//            parent = parent.getTreeParent();
+//        }
+//        PsiElement psiElement = parent.getPsi();
+//        if (psiElement instanceof PsiFile) {
+//            return (PsiFile) psiElement;
+//        } else {
+//            return null;
+//        }
+//    }
+//
+//    public static int getLength(JSFunArgs funArgs) {
+//        int size = 0;
+//        if (funArgs.getCommaSeparatedList() != null) {
+//            PsiElement element = funArgs.getCommaSeparatedList().getFirstChild();
+//            if (element.getNode().getElementType().equals(JSTypes.VNAME)) {
+//                size++;
+//            }
+//            while (element != funArgs.getCommaSeparatedList().getLastChild()) {
+//                element = element.getNextSibling();
+//                if (element.getNode().getElementType().equals(JSTypes.VNAME)) {
+//                    size++;
+//                }
+//            }
+//        }
+//        return size;
+//    }
+//
+    public static int getLength(JSFunParams jsFunParams) {
+        int size = 0;
+        if (jsFunParams.getCommaSeparatedList() != null) {
+            return jsFunParams.getCommaSeparatedList().getChildren().length;
         }
-        return null;
+        return size;
     }
 
-    public static String getValue(JSVarDeclaration element) {
-        JSVarValue value = element.getVarValue();
-        return value.getText();
+    public static PsiElement setName(JSProperty property, String name) {
+        return PsiImplUtil.setName(property, name);
     }
+
+    @NotNull
+    public static PsiElement getNameIdentifier(JSProperty property) {
+        return property;
+    }
+
+    @NotNull
+    public static int getArgsLength(JSFunctionProperty jsMethod) {
+        return jsMethod.getFunctionCall().getFunParams().getLength();
+    }
+
+
+//    public static JSObject getParent(JSProperty object) {
+//        ASTNode parent = object.getNode().getTreeParent();
+//        while (parent != null) {
+//            if (parent.getPsi() instanceof JSObject) {
+//                return (JSObject) parent;
+//            }
+//            parent = parent.getTreeParent();
+//        }
+//        return object.null;
+//    }
 }

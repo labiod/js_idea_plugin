@@ -32,7 +32,7 @@ public class JSParserDefinition implements ParserDefinition {
 
     @Override
     public PsiParser createParser(Project project) {
-        return new JSParser();
+        return new JSParserImpl();
     }
 
     @Override

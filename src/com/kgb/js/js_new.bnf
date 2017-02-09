@@ -1,0 +1,122 @@
+{
+    parserClass="com.kgb.js.parser.JSParser"
+    extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+    psiClassPrefix="JS"
+    psiImplClassSuffix="Impl"
+    psiPackage="com.kgb.js.psi"
+    psiImplPackage="com.kgb.js.psi.impl"
+    psiImplUtilClass="com.kgb.js.psi.impl.JSPsiImplUtil"
+
+    elementTypeHolderClass="com.kgb.js.psi.JSTypes"
+    elementTypeClass="com.kgb.js.psi.JSElementType"
+    tokenTypeClass="com.kgb.js.psi.JSTokenType"
+
+    psiImplUtilClass="com.kgb.js.psi.impl.JSPsiImplUtil"
+//    parserUtilClass="com.kgb.js.parser.JSPsiImplUtil"
+
+    tokens=[
+        EQ="="
+        EQ2="=="
+        EQ3="==="
+        DEQ="!="
+        DEQ2="!=="
+        PLUSEQ="+="
+        MINUSEQ="-="
+        MULEQ="*="
+        DIVEQ="/="
+        LP='{'
+        RP='}'
+        LP2='('
+        RP2=')'
+        LP3='['
+        RP3=']'
+
+        op_1='+'
+        op_2='-'
+        op_3='*'
+        op_4='/'
+        op_5='!'
+        op_10='%'
+        op_6='>'
+        op_7='>='
+        op_8='<'
+        op_9='<='
+
+        AND='&&'
+        OR='||'
+
+        number='regexp:\d+(\.\d*)?'
+        string="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")"
+        SEMI=";"
+        COLON=":"
+        COMMA=","
+        DOT='.'
+        INCREMENT='++'
+        DECREMENT='--'
+
+        newline = "regexp:\n"
+        space='regexp:[\s\t]+'
+        comment='regexp://.*'
+        multiline_comment='regexp:/\*.*\n\t\r\*/'
+        vname='regexp:\p{Alpha}\w*'
+
+        TRUE="true"
+        FALSE="false"
+        NULL="null"
+
+        // keywords
+        var='var'
+        function='function'
+        if='if'
+        t_if='?'
+        else='else'
+        for='for'
+        switch='switch'
+        case='case'
+        break='break'
+        default='default'
+        return='return'
+        while='while'
+        do='do'
+        this="this"
+        new="new"
+    ]
+
+    name(".*declaration")='declare'
+    extends(".*declaration")=declaration
+
+    name(".*expr")='expression'
+    extends(".*expr")=expr
+
+    name(".*property")='property'
+    extends(".*property")=property
+    implements(".*property")="com.kgb.js.psi.JSObject"
+}
+
+root ::= root_items*
+
+private root_items ::= (declaration | call) end_statement?
+/**
+    Declaration statement
+ */
+declaration ::= var? property EQ var_value
+property ::= primary_property child_property? {methods=[getNameIdentifier setName]}
+primary_property ::= (base_property | function_property)
+left child_property ::= ("." property)
+base_property ::= vname
+function_property ::= function_call {methods=[getArgsLength] implements="com.kgb.js.psi.JSMethod"}
+function_call ::= vname LP2 fun_params RP2
+fun_params ::= <<comma_separated_list(ternary_block|function_call|expr|base_type|)>>? {methods=[getLength]}
+var_value ::= number | string | null | true | false | property
+//**************END*****************
+
+call ::= var_value
+
+
+//
+private end_statement ::= SEMI
+
+meta comma_separated_list ::= <<param>> (',' <<param>>) *
+meta dot_separated_list ::= <<param>> ('.' <<param>>) *
+
