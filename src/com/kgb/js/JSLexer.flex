@@ -27,7 +27,6 @@ WHITE_SPACE=\s+
 
 NUMBER=[0-9]+(\.[0-9]*)?
 STRING=('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")
-NEWLINE=\n
 SPACE=[\s\t]+
 COMMENT="//".*
 MULTILINE_COMMENT="/"\*.*\n\t\r\*"/"
@@ -88,10 +87,12 @@ VNAME=[:letter:][a-zA-Z_0-9]*
   "do"                     { return DO; }
   "this"                   { return THIS; }
   "new"                    { return NEW; }
+  "ternary_block"          { return TERNARY_BLOCK; }
+  "expr"                   { return EXPR; }
+  "base_type"              { return BASE_TYPE; }
 
   {NUMBER}                 { return NUMBER; }
   {STRING}                 { return STRING; }
-  {NEWLINE}                { return NEWLINE; }
   {SPACE}                  { return SPACE; }
   {COMMENT}                { return COMMENT; }
   {MULTILINE_COMMENT}      { return MULTILINE_COMMENT; }

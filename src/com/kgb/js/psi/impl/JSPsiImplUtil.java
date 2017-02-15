@@ -87,7 +87,15 @@ public class JSPsiImplUtil {
         return size;
     }
 
-    public static PsiElement setName(JSProperty property, String name) {
+    public static int getLength(JSFunArgs funArgs) {
+        int size = 0;
+        if (funArgs.getCommaSeparatedList() != null) {
+            return funArgs.getCommaSeparatedList().getChildren().length;
+        }
+        return size;
+    }
+
+    public static PsiElement setName(PsiElement property, String name) {
         return PsiImplUtil.setName(property, name);
     }
 
@@ -97,19 +105,25 @@ public class JSPsiImplUtil {
     }
 
     @NotNull
-    public static int getArgsLength(JSFunctionProperty jsMethod) {
-        return jsMethod.getFunctionCall().getFunParams().getLength();
+    public static PsiElement getNameIdentifier(JSFunctionDeclaration functionDeclaration) {
+        return functionDeclaration.getVname();
+    }
+
+    @NotNull
+    public static int getArgsLength(JSFunctionProperty functionProperty) {
+        return functionProperty.getFunParams().getLength();
+    }
+
+    @NotNull
+    public static int getArgsLength(JSFunctionDeclaration jsMethod) {
+        return jsMethod.getFunArgs().getLength();
     }
 
 
-//    public static JSObject getParent(JSProperty object) {
-//        ASTNode parent = object.getNode().getTreeParent();
-//        while (parent != null) {
-//            if (parent.getPsi() instanceof JSObject) {
-//                return (JSObject) parent;
-//            }
-//            parent = parent.getTreeParent();
-//        }
-//        return object.null;
-//    }
+    public static PsiElement getParentProperty(JSProperty object) {
+        if (object instanceof JSChildProperty) {
+            return object.getPrevSibling();
+        }
+        return object.getParent();
+    }
 }

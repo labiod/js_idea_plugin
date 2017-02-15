@@ -55,7 +55,6 @@
         INCREMENT='++'
         DECREMENT='--'
 
-        newline = "regexp:\n"
         space='regexp:[\s\t]+'
         comment='regexp://.*'
         multiline_comment='regexp:/\*.*\n\t\r\*/'
@@ -94,29 +93,93 @@
     implements(".*property")="com.kgb.js.psi.JSObject"
 }
 
-root ::= root_items*
+root ::= body
+body ::= (root_item end_statement?)*
 
-private root_items ::= (declaration | call) end_statement?
+private root_item ::= !<<eof>> (declaration | call | js_statement)
 /**
     Declaration statement
  */
-declaration ::= var? property EQ var_value
-property ::= primary_property child_property? {methods=[getNameIdentifier setName]}
-primary_property ::= (base_property | function_property)
-left child_property ::= ("." property)
+declaration ::= property_declaration | function_declaration
+property_declaration ::= var? property EQ var_value
+property ::= root_property child_property*  {methods=[getNameIdentifier setName]}
+root_property ::= this | property_type
+child_property ::= '.' property_type {methods=[getParentProperty]}
+private property_type ::= array_property | function_property | base_property
 base_property ::= vname
-function_property ::= function_call {methods=[getArgsLength] implements="com.kgb.js.psi.JSMethod"}
-function_call ::= vname LP2 fun_params RP2
-fun_params ::= <<comma_separated_list(ternary_block|function_call|expr|base_type|)>>? {methods=[getLength]}
-var_value ::= number | string | null | true | false | property
+array_property ::= vname LP3 (base_type | vname) RP3
+function_property ::= vname LP2 fun_params RP2 {methods=[getArgsLength] implements="com.kgb.js.psi.JSMethod"}
+fun_params ::= <<comma_separated_list(ternary_block|expr|base_type)>>? {methods=[getLength]}
+var_value ::= ternary_block | expr | property | anim_function_def | array
+function_declaration ::= function vname fun_args LP body RP
+    {implements="com.kgb.js.psi.JSMethod" methods=[getNameIdentifier setName getArgsLength]}
+anim_function_def ::= function fun_args LP body RP
+fun_args ::= LP2 <<comma_separated_list(vname)>>? RP2  {methods=[getLength]}
 //**************END*****************
 
+/**
+    JS statement
+*/
+private js_statement ::=  if_statement | for_statement | switch_def | return_statement | while_statement | do_while_statement
+
+if_statement ::= if LP2 (ternary_block | cond) RP2 LP body RP else_if_statement*
+else_if_statement ::= (else if LP2 (ternary_block | cond) RP2 LP body RP) | else_statement
+else_statement ::= else LP body RP
+ternary_block ::= cond '?' (ternary_block | property | base_type) ':' (ternary_block | property | base_type)
+
+return_statement ::= return (expr | ternary_block | cond)
+for_statement ::= for for_def LP body RP
+for_def ::= LP2 for_init SEMI cond SEMI for_final_expr RP2
+switch_def ::= switch LP2 property RP2 LP switch_body RP
+private switch_body ::= case_block* default_block?
+case_block ::= case (base_type | vname) ':' body break_def?
+default_block ::= default ':' body
+private break_def ::= break ';'
+private for_init ::= <<comma_separated_list(property_declaration)>>
+private for_final_expr ::= <<comma_separated_list(var_inc_dec)>>
+while_statement ::= while LP2 (ternary_block | cond) RP2 LP body RP
+do_while_statement ::= do LP body RP while LP2 (ternary_block | cond) RP2
+//************END**************
+
+//type definition
+array ::= LP3 <<comma_separated_list(object_def | vname | base_type)>> RP3
+base_type ::= number | string | null | true | false
+var_inc_dec ::= (vname (INCREMENT | DECREMENT)) | ((INCREMENT | DECREMENT) vname)
+//**********END***********
 call ::= var_value
 
+//variable arithmetic
+expr ::= factor plus_expr *
+left plus_expr ::= plus_op factor
+private plus_op ::= op_1 | op_2
+private factor ::= primary mul_expr *
+left mul_expr ::= mul_op primary
+private mul_op ::= op_3 | op_4 | op_10
+private primary ::= primary_inner factorial_expr ?
+left factorial_expr ::= op_5
+private primary_inner ::= property | literal_expr | ref_expr | parent
+parent ::= '(' (cond | expr) ')' {pin=1}
+ref_expr ::= var_inc_dec | (vname (LP3 (vname | base_type) RP3 )?)
+private literal_expr ::= base_type
+//variable arithmetic end
 
-//
+//condition expression
+cond ::= factor_cond or_expr *
+left or_expr ::= OR factor_cond
+private factor_cond ::= primary_cond and_expr *
+left and_expr ::= AND primary_cond
+private primary_cond ::= factorial_expr ? primary_inner_cond
+private primary_inner_cond ::=  cond_expr | parent
+
+cond_expr ::= expr ((eq_st | lw_st | gr_st) expr)?
+
+
 private end_statement ::= SEMI
+private eq_st ::= EQ | EQ2 | EQ3 | DEQ | DEQ2
+private gr_st ::= op_6 | op_7
+private lw_st ::= op_8 | op_9
 
 meta comma_separated_list ::= <<param>> (',' <<param>>) *
+meta end_st_separated_list ::= <<param>> (end_statement <<param>>) *
 meta dot_separated_list ::= <<param>> ('.' <<param>>) *
 
