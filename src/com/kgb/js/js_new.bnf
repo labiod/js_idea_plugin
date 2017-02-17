@@ -1,12 +1,14 @@
 {
     parserClass="com.kgb.js.parser.JSParser"
-    extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+    extends="com.kgb.js.psi.impl.JSWrapperElement"
+    implements="com.kgb.js.psi.JSPsiElement"
 
     psiClassPrefix="JS"
     psiImplClassSuffix="Impl"
     psiPackage="com.kgb.js.psi"
     psiImplPackage="com.kgb.js.psi.impl"
     psiImplUtilClass="com.kgb.js.psi.impl.JSPsiImplUtil"
+//    stubClass="com.kgb.js.psi.stub.JSStubElement"
 
     elementTypeHolderClass="com.kgb.js.psi.JSTypes"
     elementTypeClass="com.kgb.js.psi.JSElementType"
@@ -46,7 +48,7 @@
         AND='&&'
         OR='||'
 
-        number='regexp:\d+(\.\d*)?'
+        number='regexp:\d+(\.\d+)?'
         string="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")"
         SEMI=";"
         COLON=":"
@@ -82,13 +84,11 @@
         new="new"
     ]
 
-    name(".*declaration")='declare'
-    extends(".*declaration")=declaration
+    name(".*_type")='type'
+    extends(".*_type")=base_type
+    implements(".*_type")="com.kgb.js.psi.JSObject"
 
-    name(".*expr")='expression'
-    extends(".*expr")=expr
-
-    name(".*property")='property'
+    name(".*property")='property_type'
     extends(".*property")=property
     implements(".*property")="com.kgb.js.psi.JSObject"
 }
@@ -97,9 +97,10 @@ root ::= body
 body ::= (root_item end_statement?)*
 
 private root_item ::= !<<eof>> (declaration | call | js_statement)
+
 /**
-    Declaration statement
- */
+ Declaration definition
+*/
 declaration ::= property_declaration | function_declaration
 property_declaration ::= var? property EQ var_value
 property ::= root_property child_property*  {methods=[getNameIdentifier setName]}
@@ -173,6 +174,12 @@ private primary_inner_cond ::=  cond_expr | parent
 
 cond_expr ::= expr ((eq_st | lw_st | gr_st) expr)?
 
+//***********Base type definition***********
+base_type ::= number_type | string_type | boolean_type | null
+boolean_type ::= true | false
+string_type ::= string
+number_type ::= number
+//***************END Base type definition**************
 
 private end_statement ::= SEMI
 private eq_st ::= EQ | EQ2 | EQ3 | DEQ | DEQ2
@@ -182,4 +189,3 @@ private lw_st ::= op_8 | op_9
 meta comma_separated_list ::= <<param>> (',' <<param>>) *
 meta end_st_separated_list ::= <<param>> (end_statement <<param>>) *
 meta dot_separated_list ::= <<param>> ('.' <<param>>) *
-

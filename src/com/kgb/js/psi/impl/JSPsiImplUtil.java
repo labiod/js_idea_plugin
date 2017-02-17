@@ -1,16 +1,11 @@
 package com.kgb.js.psi.impl;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.impl.PsiImplUtil;
-import com.kgb.js.psi.*;
-import org.jetbrains.annotations.NotNull;
-
 /**
  * @author Krzysztof Betlej <labiod@wp.pl>
  *         Date: 1/30/17.
  */
 public class JSPsiImplUtil {
+
 //    public static String getVar(JSDeclaration element) {
 //        String var = element.getName();
 //        if (var != null) {
