@@ -87,9 +87,6 @@ VNAME=[:letter:][a-zA-Z_0-9]*
   "do"                     { return DO; }
   "this"                   { return THIS; }
   "new"                    { return NEW; }
-  "ternary_block"          { return TERNARY_BLOCK; }
-  "expr"                   { return EXPR; }
-  "base_type"              { return BASE_TYPE; }
 
   {NUMBER}                 { return NUMBER; }
   {STRING}                 { return STRING; }

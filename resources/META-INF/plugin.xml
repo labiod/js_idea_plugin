@@ -60,6 +60,7 @@
     <!--<completion.contributor language="Lisp" implementationClass="com.kgb.lisp.completion.LispLoadCompletionContributor" />-->
 
     <lang.braceMatcher language="JS" implementationClass="com.kgb.js.JSBraceMatcher" />
+    <lang.psiStructureViewFactory language="JS" implementationClass="com.kgb.js.features.structureview.JSStructureViewFactory" />
   </extensions>
 
   <actions>

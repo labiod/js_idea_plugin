@@ -103,7 +103,7 @@ var_declaration ::= global_var | function_var | object_var | field_var {methods=
 global_var ::= var_name eq_op var_value
 function_var ::= var_name eq_op anim_function_def
     {implements="com.kgb.js.psi.JSMethod" methods=[getNameIdentifier setName getArgsLength]}
-object_var ::= var_name eq_op object_def  {implements="com.kgb.js.psi.JSObject" methods=[getNameIdentifier setName]}
+object_var ::= var_name eq_op object_def  {implements="com.kgb.js.psi.JSClass" methods=[getNameIdentifier setName]}
 field_var ::= field_name eq_op (var_value | anim_function_def | object_def)
 field_name ::= <<dot_separated_list(vname)>>
 

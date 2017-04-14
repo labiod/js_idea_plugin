@@ -1,0 +1,107 @@
+{
+    parserClass="com.kgb.js.parser.JSParser"
+    extends="com.kgb.js.psi.impl.JSClassImpl"
+    implements="com.kgb.js.psi.JSClass"
+
+    psiClassPrefix="JS"
+    psiImplClassSuffix="Impl"
+    psiPackage="com.kgb.js.psi"
+    psiImplPackage="com.kgb.js.psi.impl"
+//    psiImplUtilClass="com.kgb.js.psi.impl.JSPsiImplUtil"
+
+    elementTypeHolderClass="com.kgb.js.psi.JSTypes"
+    elementTypeClass="com.kgb.js.psi.JSElementType"
+    tokenTypeClass="com.kgb.js.psi.JSTokenType"
+
+    psiImplUtilClass="com.kgb.js.psi.impl.JSPsiImplUtil"
+//    parserUtilClass="com.kgb.js.parser.JSPsiImplUtil"
+
+    tokens=[
+        EQ="="
+        EQ2="=="
+        EQ3="==="
+        DEQ="!="
+        DEQ2="!=="
+        PLUSEQ="+="
+        MINUSEQ="-="
+        MULEQ="*="
+        DIVEQ="/="
+        LP='{'
+        RP='}'
+        LP2='('
+        RP2=')'
+        LP3='['
+        RP3=']'
+
+        op_1='+'
+        op_2='-'
+        op_3='*'
+        op_4='/'
+        op_5='!'
+        op_10='%'
+        op_6='>'
+        op_7='>='
+        op_8='<'
+        op_9='<='
+
+        AND='&&'
+        OR='||'
+
+        number='regexp:\d+(\.\d*)?'
+        string="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")"
+        SEMI=";"
+        COLON=":"
+        COMMA=","
+        DOT='.'
+        INCREMENT='++'
+        DECREMENT='--'
+
+        space='regexp:[\s\t]+'
+        comment='regexp://.*'
+        multiline_comment='regexp:/\*.*\n\t\r\*/'
+        vname='regexp:\p{Alpha}\w*'
+
+        TRUE="true"
+        FALSE="false"
+        NULL="null"
+
+        // keywords
+        var='var'
+        function='function'
+        if='if'
+        t_if='?'
+        else='else'
+        for='for'
+        switch='switch'
+        case='case'
+        break='break'
+        default='default'
+        return='return'
+        while='while'
+        do='do'
+        this="this"
+        new="new"
+    ]
+}
+
+root ::= !<<eof>> body*
+
+private body ::= property_def | function_def
+property_def ::= var? property (EQ property_value)? SEMI {methods=[getNameIdentifier getPresentation]}
+function_def ::= function vname fun_args LP body RP
+    {implements="com.kgb.js.psi.JSMethod" methods=[getNameIdentifier getArgsLength]}
+
+fun_args ::= LP2 <<comma_separated_list(property)>>? RP2 {methods=[getLength]}
+
+property ::= root_property child_property*  {methods=[getNameIdentifier]}
+
+private root_property ::= this | property_type
+private child_property ::= '.' property_type
+private property_type ::= base_property
+base_property ::= vname {methods=[getNameIdentifier]}
+property_value ::= string | number | NULL | boolean | property {methods=[getNameIdentifier]}
+boolean ::= TRUE | FALSE {methods=[getNameIdentifier]}
+
+
+//Meta data
+meta comma_separated_list ::= <<param>> (',' <<param>>) *

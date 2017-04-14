@@ -90,7 +90,7 @@
 
     name(".*property")='property'
     extends(".*property")=property
-    implements(".*property")="com.kgb.js.psi.JSObject"
+    implements(".*property")="com.kgb.js.psi.JSClass"
 }
 
 root ::= body
