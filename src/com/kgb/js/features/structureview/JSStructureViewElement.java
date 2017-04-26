@@ -6,11 +6,9 @@ import com.intellij.ide.util.treeView.smartTree.TreeElement;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.kgb.js.psi.JSFile;
-import com.kgb.js.psi.JSPropertyDef;
+import com.kgb.js.psi.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -47,15 +45,31 @@ public class JSStructureViewElement implements StructureViewTreeElement, Sortabl
     @NotNull
     @Override
     public TreeElement[] getChildren() {
-        if (element instanceof JSFile || element instanceof JSPropertyDef) {
-            JSPropertyDef[] definitions = PsiTreeUtil.getChildrenOfType(element, JSPropertyDef.class);
+        if (element instanceof JSFile || element instanceof JSFunctionDef) {
+            List<TreeElement> treeElements = new ArrayList<>();
+            JSClassDef[] definitions = PsiTreeUtil.getChildrenOfType(element, JSClassDef.class);
             if (definitions != null) {
-                List<TreeElement> treeElements = new ArrayList<>(definitions.length);
-                for (JSPropertyDef property : definitions) {
+                for (JSClassDef def : definitions) {
+                    treeElements.add(new JSStructureViewElement(def));
+                }
+            }
+//            JSFunctionDef[] functionDefs = PsiTreeUtil.getChildrenOfType(element, JSFunctionDef.class);
+//            if (functionDefs != null) {
+//                for (JSFunctionDef functionDef : functionDefs) {
+//                    treeElements.add(new JSStructureViewElement(functionDef));
+//                }
+//            }
+            return treeElements.toArray(new TreeElement[treeElements.size()]);
+        } else if ((element instanceof JSPropertyDef && ((JSPropertyDef)element).isFunction())) {
+            List<TreeElement> treeElements = new ArrayList<>();
+            PsiElement parent = ((JSPropertyDef) element).getPropertyValue().getFunctionDef();
+            JSClassDef[] definitions = PsiTreeUtil.getChildrenOfType(parent, JSClassDef.class);
+            if (definitions != null) {
+                for (JSClassDef property : definitions) {
                     treeElements.add(new JSStructureViewElement(property));
                 }
-                return treeElements.toArray(new TreeElement[treeElements.size()]);
             }
+            return treeElements.toArray(new TreeElement[treeElements.size()]);
         }
         return EMPTY_ARRAY;
     }

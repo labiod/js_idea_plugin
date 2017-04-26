@@ -10,47 +10,51 @@ import com.intellij.psi.*;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.SearchScope;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.kgb.js.JsIcons;
 import com.kgb.js.psi.JSClass;
 import com.kgb.js.psi.JSField;
 import com.kgb.js.psi.JSMethod;
+import com.kgb.js.psi.JSProperty;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Krzysztof Betlej <labiod@wp.pl>
  *         Date: 4/14/17.
  */
-public abstract class JSClassImpl extends ASTWrapperPsiElement implements JSClass {
+public abstract class JSClassImpl extends JSPsiBaseImpl implements JSClass {
 
     public JSClassImpl(@NotNull ASTNode node) {
         super(node);
     }
 
-    @Override
-    public PsiElement getParent() {
-        return null;
-    }
-
-    @Override
-    public PsiElement getNavigationElement() {
-        return null;
-    }
-
     @Nullable
     @Override
     public JSClass getSuperClass() {
-        return null;
+        return new JSObject(getNode());
     }
 
     @NotNull
     @Override
     public JSMethod[] getMethods() {
-        return new JSMethod[0];
+        List<JSMethod> methodList = new ArrayList<>(Arrays.asList(getSuperClass().getMethods()));
+        JSMethod[] classMethods = getMethodsInner();
+        if (classMethods != null) {
+            methodList.addAll(Arrays.asList(classMethods));
+        }
+        JSMethod[] methods = new JSMethod[methodList.size()];
+        return methodList.toArray(methods);
     }
+
+    protected abstract JSMethod[] getMethodsInner();
 
     @NotNull
     @Override

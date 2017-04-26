@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
  * @version 0.0.1; created:04.02.2017
  *          Class com.kgb.js.psi.JSClass
  */
-public interface JSClass extends PsiNameIdentifierOwner, PsiTarget, NavigationItem {
+public interface JSClass extends JSPsiBase {
     PsiElement getParent();
 
     @Nullable

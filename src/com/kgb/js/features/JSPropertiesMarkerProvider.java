@@ -2,19 +2,10 @@ package com.kgb.js.features;
 
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
-import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.kgb.js.JSUtil;
-import com.kgb.js.JsIcons;
-import com.kgb.js.psi.*;
-import com.kgb.js.psi.impl.JSPsiImplUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * @author labiod : <labiod@wp.pl>;

@@ -6,13 +6,13 @@
     psiImplClassSuffix="Impl"
     psiPackage="com.kgb.js.psi"
     psiImplPackage="com.kgb.js.psi.impl"
-    psiImplUtilClass="com.kgb.js.psi.impl.JSPsiImplUtil"
+    psiImplUtilClass="com.kgb.js.psi.utils.JSPsiImplUtil"
 
     elementTypeHolderClass="com.kgb.js.psi.JSTypes"
     elementTypeClass="com.kgb.js.psi.JSElementType"
     tokenTypeClass="com.kgb.js.psi.JSTokenType"
 
-    psiImplUtilClass="com.kgb.js.psi.impl.JSPsiImplUtil"
+    psiImplUtilClass="com.kgb.js.psi.utils.JSPsiImplUtil"
 //    parserUtilClass="com.kgb.js.parser.JSPsiImplUtil"
 
     tokens=[

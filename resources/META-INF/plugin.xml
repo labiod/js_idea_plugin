@@ -43,7 +43,7 @@
     <fileTypeFactory implementation="com.kgb.js.JSFileTypeFactory" />
     <lang.parserDefinition language="JS" implementationClass="com.kgb.js.parser.JSParserDefinition" />
     <lang.syntaxHighlighterFactory language="JS" implementationClass="com.kgb.js.highlighters.JSSyntaxHighlighterFactory" />
-    <lang.commenter language="JS" implementationClass="com.kgb.js.lang.feature.JSCommenter" />
+    <lang.commenter language="JS" implementationClass="com.kgb.js.features.JSCommenter" />
 
     <!-- Annotators -->
     <annotator language="JS" implementationClass="com.kgb.js.annotators.JSPropertyAnnotator" />

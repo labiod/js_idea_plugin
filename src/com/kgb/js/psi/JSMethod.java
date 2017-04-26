@@ -10,6 +10,7 @@ import com.intellij.psi.PsiTarget;
  */
 public interface JSMethod extends JSClass {
     default int getArgsLength() {
-        return 0;
+        return getFunArgs().getLength();
     }
+    JSFunArgs getFunArgs();
 }
