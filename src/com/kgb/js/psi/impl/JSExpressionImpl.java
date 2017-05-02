@@ -3,7 +3,6 @@ package com.kgb.js.psi.impl;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.kgb.js.psi.*;
 import org.jetbrains.annotations.NotNull;
@@ -50,6 +49,11 @@ public abstract class JSExpressionImpl extends ASTWrapperPsiElement implements J
 
     @Override
     public PsiElement setName(@NotNull String s) throws IncorrectOperationException {
+        return null;
+    }
+
+    @Override
+    public JSPropertySpace getNamespace() {
         return null;
     }
 }

@@ -7,7 +7,7 @@ import com.kgb.js.psi.*;
  *         Date: 4/24/17.
  */
 public class JSTypeUtils {
-    public static String getTypeName(JSProperty property) {
+    public static String getTypeName(JSPropertySpace property) {
         return "Object";
     }
 
@@ -15,8 +15,8 @@ public class JSTypeUtils {
         JSPrimaryInner primaryInner = expr.getPrimaryInner();
         if (primaryInner.getTypeDef() != null) {
             return primaryInner.getTypeDef();
-        } else if (primaryInner.getClassDef() != null) {
-            return primaryInner.getClassDef();
+        } else if (primaryInner.getPropertyObject() != null) {
+            return primaryInner.getPropertyObject();
         } else {
             return null;
         }

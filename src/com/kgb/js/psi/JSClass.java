@@ -1,6 +1,5 @@
 package com.kgb.js.psi;
 
-import com.intellij.navigation.NavigationItem;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,4 +23,6 @@ public interface JSClass extends JSPsiBase {
 
     @NotNull
     JSMethod[] getAllMethods();
+
+    JSPropertySpace getNamespace();
 }

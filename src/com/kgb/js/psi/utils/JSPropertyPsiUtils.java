@@ -4,10 +4,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.kgb.js.psi.JSMethod;
-import com.kgb.js.psi.JSProperty;
-import com.kgb.js.psi.JSPropertyDef;
-import com.kgb.js.psi.JSPropertyValue;
+import com.kgb.js.psi.*;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -17,11 +14,11 @@ import javax.swing.*;
  *         Date: 4/24/17.
  */
 public class JSPropertyPsiUtils {
-    public static JSMethod[] getMethods(JSPropertyDef propertyDef) {
-        if (propertyDef.getPropertyValue() == null) {
+    public static JSMethod[] getMethods(JSDefProperty propertyDef) {
+        if (propertyDef.getValue() == null) {
             return new JSMethod[0];
         }
-        JSPropertyValue propertyValue = propertyDef.getPropertyValue();
+        JSValue propertyValue = propertyDef.getValue();
         if (propertyValue.getFunctionDef() != null) {
             return PsiTreeUtil.getChildrenOfType(propertyValue.getFunctionDef(), JSMethod.class);
         } else {
@@ -29,7 +26,7 @@ public class JSPropertyPsiUtils {
         }
     }
 
-    public static PsiElement getNameIdentifier(JSPropertyValue propertyValue) {
+    public static PsiElement getNameIdentifier(JSValue propertyValue) {
         if (propertyValue.getExpr() != null) {
             return propertyValue.getExpr();
         } else {
@@ -37,14 +34,14 @@ public class JSPropertyPsiUtils {
         }
     }
 
-    public static ItemPresentation getPresentation(JSPropertyDef propertyDef) {
+    public static ItemPresentation getPresentation(JSDefProperty propertyDef) {
         return new ItemPresentation() {
             @Nullable
             @Override
             public String getPresentableText() {
-                if (propertyDef.isFunction()) {
+                if (propertyDef.isFunctionRef()) {
                     return propertyDef.getName() + ": function(" + JSFunctionPsiUtils.getFunArgsPresentableText(
-                            propertyDef.getPropertyValue().getFunctionDef()) + ")";
+                            propertyDef.getValue().getFunctionDef()) + ")";
                 }
                 return propertyDef.getName();
             }
@@ -58,17 +55,43 @@ public class JSPropertyPsiUtils {
             @Nullable
             @Override
             public Icon getIcon(boolean b) {
-                return propertyDef.isFunction() ? AllIcons.Nodes.MethodReference : AllIcons.Nodes.Property;
+                return propertyDef.isFunctionRef() ? AllIcons.Nodes.MethodReference : AllIcons.Nodes.Property;
             }
         };
     }
 
-    public static ItemPresentation getPresentation(JSProperty property) {
+    public static ItemPresentation getPresentation(JSAssignProperty propertyAssign) {
         return new ItemPresentation() {
             @Nullable
             @Override
             public String getPresentableText() {
-                return property.getName() + ":" + JSTypeUtils.getTypeName(property);
+                if (propertyAssign.isFunctionRef()) {
+                    return propertyAssign.getName() + ": function(" + JSFunctionPsiUtils.getFunArgsPresentableText(
+                            propertyAssign.getValue().getFunctionDef()) + ")";
+                }
+                return propertyAssign.getName();
+            }
+
+            @Nullable
+            @Override
+            public String getLocationString() {
+                return "";
+            }
+
+            @Nullable
+            @Override
+            public Icon getIcon(boolean b) {
+                return propertyAssign.isFunctionRef() ? AllIcons.Nodes.MethodReference : AllIcons.Nodes.Property;
+            }
+        };
+    }
+
+    public static ItemPresentation getPresentation(JSPropertySpace propertySpace) {
+        return new ItemPresentation() {
+            @Nullable
+            @Override
+            public String getPresentableText() {
+                return propertySpace.getName() + ":" + JSTypeUtils.getTypeName(propertySpace);
             }
 
             @Nullable

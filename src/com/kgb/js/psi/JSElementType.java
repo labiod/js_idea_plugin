@@ -13,4 +13,6 @@ public class JSElementType extends IElementType {
     public JSElementType(@NotNull @NonNls String debugName) {
         super(debugName, JSLanguage.INSTANCE);
     }
+
+
 }

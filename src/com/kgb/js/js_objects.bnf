@@ -14,7 +14,7 @@
     tokenTypeClass="com.kgb.js.psi.JSTokenType"
 
     psiImplUtilClass="com.kgb.js.psi.utils.JSPsiImplUtil"
-//    parserUtilClass="com.kgb.js.parser.JSPsiImplUtil"
+    parserUtilClass="com.kgb.js.parser.JSPsiParserUtil"
 
     tokens=[
         EQ="="
@@ -83,8 +83,11 @@
         new="new"
     ]
 
-    extends(".*_def")="classDef"
-    extends(".*property")="classDef"
+    extends(".*_property")="classDef"
+    extends("function_def")="classDef"
+    implements("property_.*")="com.kgb.js.psi.JSProperty"
+    extends("property_.*")="com.kgb.js.psi.impl.JSPropertyImpl"
+
     extends(".*_type")="typeDef"
 }
 
@@ -98,7 +101,7 @@ private root_item ::= js_statement | definition | call
 /**
     Types define
  */
-classDef ::= {implements="com.kgb.js.psi.JSClass" extends="com.kgb.js.psi.impl.JSClassImpl"methods=[getMethodsInner]}
+classDef ::= {implements="com.kgb.js.psi.JSClass" extends="com.kgb.js.psi.impl.JSClassImpl" methods=[getMethodsInner getNamespace]}
 typeDef ::= {implements="com.kgb.js.psi.JSType" extends="com.kgb.js.psi.impl.JSTypeImpl" methods=[getNameIdentifier getMethodsInner]}
 boolean_type ::= TRUE | FALSE
 number_type ::= number
@@ -116,16 +119,16 @@ private js_statement ::=  if_statement | for_statement | switch_def | return_sta
 if_statement ::= if LP2 (ternary_block | cond) RP2 LP body RP else_if_statement*
 else_if_statement ::= (else if LP2 (ternary_block | cond) RP2 LP body RP) | else_statement
 else_statement ::= else LP body RP
-ternary_block ::= cond '?' (ternary_block | property | literal_expr) ':' (ternary_block | property | literal_expr)
+ternary_block ::= cond '?' (ternary_block | property_object | literal_expr) ':' (ternary_block | property_object | literal_expr)
 
 //for statemnet
 for_statement ::= for LP2 for_init SEMI cond SEMI for_final_expr RP2 LP body RP
-private for_init ::= <<comma_separated_list(property_def)>>
+private for_init ::= <<comma_separated_list(def_property)>>
 private for_final_expr ::= <<comma_separated_list(var_inc_dec)>>
 var_inc_dec ::= (vname (INCREMENT | DECREMENT)) | ((INCREMENT | DECREMENT) vname)
 
 //switch statement
-switch_def ::= switch LP2 property RP2 LP switch_body RP
+switch_def ::= switch LP2 property_object RP2 LP switch_body RP
 private switch_body ::= case_block* default_block?
 case_block ::= case (literal_expr | vname) ':' body break_def?
 default_block ::= default ':' body
@@ -139,26 +142,31 @@ do_while_statement ::= do LP body RP while LP2 (ternary_block | cond) RP2
 /**
     End Javascript statement
  */
-private definition ::= (property_def SEMI) | function_def
-property_def ::= var? property (EQ property_value)? {methods=[getNameIdentifier isFunction getPresentation getMethodsInner]}
+private definition ::= (def_property SEMI) | (assign_property SEMI) | function_def
+def_property ::= var property_object (EQ value)? {methods=[getNameIdentifier isFunctionRef getPresentation getMethodsInner]}
+assign_property ::= property_object EQ value {methods=[getNameIdentifier isFunctionRef getPresentation getMethodsInner]}
 function_def ::= function vname? fun_args LP body RP
     {implements="com.kgb.js.psi.JSMethod" methods=[getNameIdentifier getArgsLength getPresentation getMethodsInner]}
-
+array_value ::= LP3 array_params RP3
+array_params ::= <<comma_separated_list(array_param)>>?
+array_param ::= property_object | function_call | literal_expr
 
 fun_args ::= LP2 <<comma_separated_list(fun_arg)>>? RP2 {methods=[getLength]}
 
 fun_arg ::= vname
 
-property ::= root_property child_property*  {methods=[getNameIdentifier getMethodsInner getPresentation]}
+property_object ::= property_object_external {methods=[getNameIdentifier getMethodsInner getPresentation getNamespace getObject]}
+//property_space ::= property_object_external {methods=[getNameIdentifier getMethodsInner getPresentation]}
+external property_object_external ::= property_object_external_call  {methods=[getNameIdentifier getMethodsInner getPresentation]}
+property_base ::= function_call | property_array | vname {methods=[getNameIdentifier getMethodsInner getPresentation]}
 
-private root_property ::= this | base_property
-private child_property ::= '.' base_property
-base_property ::= function_call | property_array | vname {methods=[getNameIdentifier getMethodsInner]}
-property_array ::= vname LP3 (vname | literal_expr) RP3
-property_value ::= ternary_block | cond | expr | function_def
+property_array ::= vname prop_array_inner {methods=[getNameIdentifier getMethodsInner]}
+prop_array_inner ::= LP3 (vname | literal_expr) RP3
+value ::= ternary_block | cond | expr | function_def
 function_call ::= vname fun_params
 fun_params ::= LP2 <<comma_separated_list(fun_param)>>? RP2 {methods=[getLength]}
-fun_param ::= property | function_call | literal_expr
+fun_param ::= property_object | function_call | literal_expr
+
 //variable arithmetic
 expr ::= factor plus_expr * {implements="com.kgb.js.psi.JSExpression" extends="com.kgb.js.psi.impl.JSExpressionImpl"
     methods=[getType]}
@@ -169,7 +177,7 @@ private left mul_expr ::= mul_op primary
 private mul_op ::= op_3 | op_4 | op_10
 private primary ::= primary_inner factorial_expr ?
 private left factorial_expr ::= op_5
-primary_inner ::= property | literal_expr | parent
+primary_inner ::= property_object | array_value | literal_expr | parent
 private parent ::= '(' (cond | expr) ')' {pin=1}
 private literal_expr ::= string_type | number_type | null_type | boolean_type
 //variable arithmetic end
@@ -188,9 +196,9 @@ private eq_st ::= EQ | EQ2 | EQ3 | DEQ | DEQ2
 private gr_st ::= op_6 | op_7
 private lw_st ::= op_8 | op_9
 
-call ::= property SEMI
+call ::= property_object SEMI
 
 
 //Meta data
 private meta comma_separated_list ::= <<param>> (',' <<param>>) *
-private meta dot_separated_list ::= <<param>> ('.' <<param>>) *
+meta dot_separated_list ::= <<param>> ('.' <<param>>) *

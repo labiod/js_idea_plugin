@@ -3,6 +3,7 @@ package com.kgb.js.psi.impl;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.kgb.js.psi.JSMethod;
+import com.kgb.js.psi.JSPropertySpace;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,6 +20,11 @@ public class JSObject extends JSClassImpl {
     @Override
     public JSMethod[] getMethods() {
         return getMethodsInner();
+    }
+
+    @Override
+    public JSPropertySpace getNamespace() {
+        return null;
     }
 
     @Override

@@ -16,6 +16,6 @@ public class JSTokenType extends IElementType {
 
     @Override
     public String toString() {
-        return "JSTokenType." + super.toString();
+        return "JSTokenType::= " + super.toString() + "";
     }
 }

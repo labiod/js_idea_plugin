@@ -16,6 +16,7 @@ import com.kgb.js.JSLanguage;
 import com.kgb.js.lexer.JSLexerAdapter;
 import com.kgb.js.psi.JSFile;
 import com.kgb.js.psi.JSTypes;
+import com.kgb.js.psi.JSTypesExernal;
 import org.jetbrains.annotations.NotNull;
 
 public class JSParserDefinition implements ParserDefinition {
@@ -61,7 +62,7 @@ public class JSParserDefinition implements ParserDefinition {
     @NotNull
     @Override
     public PsiElement createElement(ASTNode astNode) {
-        return new JSTypes.Factory().createElement(astNode);
+        return new JSTypesExernal.Factory().createElement(astNode);
     }
 
     @Override

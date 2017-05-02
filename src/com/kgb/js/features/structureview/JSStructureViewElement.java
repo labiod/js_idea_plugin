@@ -10,6 +10,7 @@ import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.kgb.js.psi.*;
 import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.diagnostic.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,7 @@ public class JSStructureViewElement implements StructureViewTreeElement, Sortabl
     @NotNull
     @Override
     public ItemPresentation getPresentation() {
+        Logger.getInstance(getClass()).info("element type: " + (element.getClass().getSimpleName()));
         return element instanceof NavigationItem ? ((NavigationItem) element).getPresentation() : null;
     }
 
@@ -46,32 +48,48 @@ public class JSStructureViewElement implements StructureViewTreeElement, Sortabl
     @Override
     public TreeElement[] getChildren() {
         if (element instanceof JSFile || element instanceof JSFunctionDef) {
-            List<TreeElement> treeElements = new ArrayList<>();
+            List<JSStructureViewElement> treeElements = new ArrayList<>();
             JSClassDef[] definitions = PsiTreeUtil.getChildrenOfType(element, JSClassDef.class);
             if (definitions != null) {
                 for (JSClassDef def : definitions) {
+                    JSStructureViewElement treeElement = getDefinitionFromTree(treeElements, def);
+                    if (treeElement != null) {
+                        treeElements.remove(treeElement);
+                    }
                     treeElements.add(new JSStructureViewElement(def));
                 }
             }
-//            JSFunctionDef[] functionDefs = PsiTreeUtil.getChildrenOfType(element, JSFunctionDef.class);
-//            if (functionDefs != null) {
-//                for (JSFunctionDef functionDef : functionDefs) {
-//                    treeElements.add(new JSStructureViewElement(functionDef));
-//                }
-//            }
             return treeElements.toArray(new TreeElement[treeElements.size()]);
-        } else if ((element instanceof JSPropertyDef && ((JSPropertyDef)element).isFunction())) {
-            List<TreeElement> treeElements = new ArrayList<>();
-            PsiElement parent = ((JSPropertyDef) element).getPropertyValue().getFunctionDef();
+        } else if ((element instanceof JSDefProperty && ((JSDefProperty)element).isFunctionRef()) ||
+                (element instanceof JSAssignProperty && ((JSAssignProperty)element).isFunctionRef())) {
+            List<JSStructureViewElement> treeElements = new ArrayList<>();
+            PsiElement parent = element instanceof JSDefProperty ? ((JSDefProperty)element).getValue().getFunctionDef() :
+                    ((JSAssignProperty)element).getValue().getFunctionDef();
             JSClassDef[] definitions = PsiTreeUtil.getChildrenOfType(parent, JSClassDef.class);
             if (definitions != null) {
                 for (JSClassDef property : definitions) {
+                    JSStructureViewElement treeElement = getDefinitionFromTree(treeElements, property);
+                    if (treeElement != null) {
+                        treeElements.remove(treeElement);
+
+                    } else if (property instanceof JSDefProperty) {
+                        JSPropertyObject parentProperty = ((JSDefProperty) property).getPropertyObject();
+                    }
                     treeElements.add(new JSStructureViewElement(property));
                 }
             }
             return treeElements.toArray(new TreeElement[treeElements.size()]);
         }
         return EMPTY_ARRAY;
+    }
+
+    private JSStructureViewElement getDefinitionFromTree(List<JSStructureViewElement> treeElements, JSClassDef def) {
+        for (JSStructureViewElement element : treeElements) {
+            if (element.element instanceof JSClassDef && ((JSClassDef) element.element).getName().equals(def.getName())) {
+                return element;
+            }
+        }
+        return null;
     }
 
     @Override

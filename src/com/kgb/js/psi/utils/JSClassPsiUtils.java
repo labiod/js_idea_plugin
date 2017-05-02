@@ -14,27 +14,27 @@ public class JSClassPsiUtils {
         return PsiTreeUtil.getChildrenOfType(method, JSMethod.class);
     }
 
-    public static JSMethod[] getMethodsInner(JSBaseProperty property) {
-        return new JSMethod[0];
-    }
-
     public static JSMethod[] getMethodsInner(JSProperty property) {
         return new JSMethod[0];
     }
 
-    public static JSMethod[] getMethodsInner(JSPropertyDef propertyDef) {
+    public static JSMethod[] getMethodsInner(JSPropertySpace property) {
+        return new JSMethod[0];
+    }
+
+    public static JSMethod[] getMethodsInner(JSDefProperty propertyDef) {
         return JSPropertyPsiUtils.getMethods(propertyDef);
     }
 
-    public static JSMethod[] getMethodsInner(JSClassDef classDef) {
+    public static JSMethod[] getMethodsInner(JSClass classDef) {
         if (classDef instanceof JSMethod) {
             return getMethodsInner((JSMethod)classDef);
-        } else if (classDef instanceof JSBaseProperty) {
-            return getMethodsInner((JSBaseProperty)classDef);
         } else if (classDef instanceof JSProperty) {
             return getMethodsInner((JSProperty)classDef);
-        } else if (classDef instanceof JSPropertyDef) {
-            return getMethodsInner((JSPropertyDef)classDef);
+        } else if (classDef instanceof JSPropertySpace) {
+            return getMethodsInner((JSPropertySpace) classDef);
+        } else if (classDef instanceof JSDefProperty) {
+            return getMethodsInner((JSDefProperty)classDef);
         }
         return new JSMethod[0];
     }
