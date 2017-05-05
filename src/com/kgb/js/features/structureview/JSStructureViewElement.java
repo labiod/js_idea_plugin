@@ -20,72 +20,145 @@ import java.util.List;
  *         Date: 4/14/17.
  */
 public class JSStructureViewElement implements StructureViewTreeElement, SortableTreeElement {
-    private PsiElement element;
+    private JSClassDef element;
+    private List<JSStructureViewElement> mAdditionallChildren = new ArrayList<>();
+    private List<JSStructureViewElement> mAllChildren = new ArrayList<>();
 
-    public JSStructureViewElement(PsiElement element) {
+    public JSStructureViewElement(JSPropertySet parent, JSPropertySet element) {
+        element.getPropertyObject().setNameSpace(parent.getPropertyObject());
         this.element = element;
+        recreateChildren();
+    }
+
+    public JSStructureViewElement(JSClassDef element) {
+        this.element = element;
+        recreateChildren();
     }
 
     @Override
-    public Object getValue() {
+    public JSClassDef getValue() {
         return element;
     }
 
     @NotNull
     @Override
     public String getAlphaSortKey() {
-        return element instanceof PsiNamedElement ? ((PsiNamedElement) element).getName() : "";
+        return element != null ? element.getName() : "";
     }
 
     @NotNull
     @Override
     public ItemPresentation getPresentation() {
-        Logger.getInstance(getClass()).info("element type: " + (element.getClass().getSimpleName()));
-        return element instanceof NavigationItem ? ((NavigationItem) element).getPresentation() : null;
+        return element != null ? element.getPresentation() : null;
     }
 
     @NotNull
     @Override
-    public TreeElement[] getChildren() {
-        if (element instanceof JSFile || element instanceof JSFunctionDef) {
-            List<JSStructureViewElement> treeElements = new ArrayList<>();
+    public JSStructureViewElement[] getChildren() {
+//        recreateChildren();
+        if (!mAllChildren.containsAll(mAdditionallChildren)) {
+            mAllChildren.removeAll(mAdditionallChildren);
+            mAllChildren.addAll(mAdditionallChildren);
+        }
+        return mAllChildren.toArray(new JSStructureViewElement[mAllChildren.size()]);
+    }
+
+    private void recreateChildren() {
+        mAllChildren = new ArrayList<>();
+        if (element instanceof JSFunctionDef) {
             JSClassDef[] definitions = PsiTreeUtil.getChildrenOfType(element, JSClassDef.class);
             if (definitions != null) {
-                for (JSClassDef def : definitions) {
-                    JSStructureViewElement treeElement = getDefinitionFromTree(treeElements, def);
+                for (JSClassDef property : definitions) {
+                    JSStructureViewElement treeElement = getDefinitionFromTree(mAllChildren, property);
                     if (treeElement != null) {
-                        treeElements.remove(treeElement);
+                        mAllChildren.remove(treeElement);
+                        mAllChildren.add(new JSStructureViewElement(property));
+                    } else if (property instanceof JSPropertySet) {
+                        JSProperty parentProperty = getRootProperty(((JSPropertySet) property).getPropertyObject());
+                        if (parentProperty != null) {
+                            Logger.getInstance(getClass()).info(parentProperty.getText());
+                            JSStructureViewElement parentElement = getDefinitionFromTree(mAllChildren, parentProperty);
+                            if (parentElement != null) {
+                                JSStructureViewElement.merge(parentElement, (JSPropertySet) property);
+                            } else {
+                                mAllChildren.add(new JSStructureViewElement(property));
+                            }
+                        } else {
+                            mAllChildren.add(new JSStructureViewElement(property));
+                        }
+                    } else {
+                        mAllChildren.add(new JSStructureViewElement(property));
                     }
-                    treeElements.add(new JSStructureViewElement(def));
                 }
             }
-            return treeElements.toArray(new TreeElement[treeElements.size()]);
-        } else if ((element instanceof JSDefProperty && ((JSDefProperty)element).isFunctionRef()) ||
-                (element instanceof JSAssignProperty && ((JSAssignProperty)element).isFunctionRef())) {
-            List<JSStructureViewElement> treeElements = new ArrayList<>();
-            PsiElement parent = element instanceof JSDefProperty ? ((JSDefProperty)element).getValue().getFunctionDef() :
-                    ((JSAssignProperty)element).getValue().getFunctionDef();
+        } else if ((element instanceof JSPropertySet && ((JSPropertySet)element).isFunctionRef())) {
+            PsiElement parent = ((JSPropertySet)element).getValue().getFunctionDef();
             JSClassDef[] definitions = PsiTreeUtil.getChildrenOfType(parent, JSClassDef.class);
             if (definitions != null) {
                 for (JSClassDef property : definitions) {
-                    JSStructureViewElement treeElement = getDefinitionFromTree(treeElements, property);
+                    JSStructureViewElement treeElement = getDefinitionFromTree(mAllChildren, property);
                     if (treeElement != null) {
-                        treeElements.remove(treeElement);
-
-                    } else if (property instanceof JSDefProperty) {
-                        JSPropertyObject parentProperty = ((JSDefProperty) property).getPropertyObject();
+                        mAllChildren.remove(treeElement);
+                        mAllChildren.add(new JSStructureViewElement(property));
+                    } else if (property instanceof JSPropertySet) {
+                        JSProperty parentProperty = getRootProperty(((JSPropertySet) property).getPropertyObject());
+                        if (parentProperty != null) {
+                            Logger.getInstance(getClass()).info(parentProperty.getText());
+                            JSStructureViewElement parentElement = getDefinitionFromTree(mAllChildren, parentProperty);
+                            if (parentElement != null) {
+                                JSStructureViewElement.merge(parentElement, (JSPropertySet) property);
+                            } else {
+                                mAllChildren.add(new JSStructureViewElement((JSPropertySet)element, (JSPropertySet) property));
+                            }
+                        } else {
+                            mAllChildren.add(new JSStructureViewElement((JSPropertySet)element, (JSPropertySet) property));
+                        }
+                    } else {
+                        mAllChildren.add(new JSStructureViewElement((JSPropertySet)element, (JSPropertySet) property));
                     }
-                    treeElements.add(new JSStructureViewElement(property));
                 }
             }
-            return treeElements.toArray(new TreeElement[treeElements.size()]);
         }
-        return EMPTY_ARRAY;
+        this.mAllChildren.addAll(mAdditionallChildren);
+    }
+
+    static JSProperty getRootProperty(JSProperty propertyObject) {
+        JSProperty result = propertyObject;
+        while (result.getParentProperty() != null) {
+            result = result.getParentProperty();
+        }
+        return result instanceof JSPropertySpace ? ((JSPropertySpace) result).getProperty() : result;
+    }
+
+    static void merge(JSStructureViewElement parentElement, JSPropertySet property) {
+        boolean added = false;
+        for (JSStructureViewElement child : parentElement.getChildren()) {
+            if (tryToAddToElement(child, property)) {
+                added = true;
+                break;
+            }
+        }
+        if (!added) {
+            parentElement.mAdditionallChildren.add(new JSStructureViewElement(property));
+        }
+    }
+
+    private static boolean tryToAddToElement(JSStructureViewElement child, JSPropertySet property) {
+        if (child.element instanceof JSPropertySet) {
+            JSProperty object = ((JSPropertySet) child.element).getPropertyObject();
+            String namespaceText = property.getPropertyObject().getNamespace().getText();
+            namespaceText = namespaceText.substring(0, namespaceText.length() - 1);
+            if (namespaceText.startsWith(object.getFullName())) {
+                merge(child, property);
+                return true;
+            }
+        }
+        return false;
     }
 
     private JSStructureViewElement getDefinitionFromTree(List<JSStructureViewElement> treeElements, JSClassDef def) {
         for (JSStructureViewElement element : treeElements) {
-            if (element.element instanceof JSClassDef && ((JSClassDef) element.element).getName().equals(def.getName())) {
+            if (element.element != null && element.element.getName().equals(def.getName())) {
                 return element;
             }
         }
@@ -94,18 +167,18 @@ public class JSStructureViewElement implements StructureViewTreeElement, Sortabl
 
     @Override
     public void navigate(boolean requestFocus) {
-        if (element instanceof NavigationItem) {
-            ((NavigationItem) element).navigate(requestFocus);
+        if (element != null) {
+            element.navigate(requestFocus);
         }
     }
 
     @Override
     public boolean canNavigate() {
-        return element instanceof NavigationItem && ((NavigationItem) element).canNavigate();
+        return element != null && element.canNavigate();
     }
 
     @Override
     public boolean canNavigateToSource() {
-        return element instanceof NavigationItem && ((NavigationItem) element).canNavigateToSource();
+        return (element != null) && element.canNavigateToSource();
     }
 }

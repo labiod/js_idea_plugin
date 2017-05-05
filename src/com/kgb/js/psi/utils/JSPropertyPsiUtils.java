@@ -34,58 +34,6 @@ public class JSPropertyPsiUtils {
         }
     }
 
-    public static ItemPresentation getPresentation(JSDefProperty propertyDef) {
-        return new ItemPresentation() {
-            @Nullable
-            @Override
-            public String getPresentableText() {
-                if (propertyDef.isFunctionRef()) {
-                    return propertyDef.getName() + ": function(" + JSFunctionPsiUtils.getFunArgsPresentableText(
-                            propertyDef.getValue().getFunctionDef()) + ")";
-                }
-                return propertyDef.getName();
-            }
-
-            @Nullable
-            @Override
-            public String getLocationString() {
-                return "";
-            }
-
-            @Nullable
-            @Override
-            public Icon getIcon(boolean b) {
-                return propertyDef.isFunctionRef() ? AllIcons.Nodes.MethodReference : AllIcons.Nodes.Property;
-            }
-        };
-    }
-
-    public static ItemPresentation getPresentation(JSAssignProperty propertyAssign) {
-        return new ItemPresentation() {
-            @Nullable
-            @Override
-            public String getPresentableText() {
-                if (propertyAssign.isFunctionRef()) {
-                    return propertyAssign.getName() + ": function(" + JSFunctionPsiUtils.getFunArgsPresentableText(
-                            propertyAssign.getValue().getFunctionDef()) + ")";
-                }
-                return propertyAssign.getName();
-            }
-
-            @Nullable
-            @Override
-            public String getLocationString() {
-                return "";
-            }
-
-            @Nullable
-            @Override
-            public Icon getIcon(boolean b) {
-                return propertyAssign.isFunctionRef() ? AllIcons.Nodes.MethodReference : AllIcons.Nodes.Property;
-            }
-        };
-    }
-
     public static ItemPresentation getPresentation(JSPropertySpace propertySpace) {
         return new ItemPresentation() {
             @Nullable

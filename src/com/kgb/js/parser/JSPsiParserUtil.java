@@ -2,55 +2,83 @@ package com.kgb.js.parser;
 
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.parser.GeneratedParserUtilBase;
-import com.intellij.openapi.diagnostic.Logger;
+import com.kgb.js.psi.JSTypes;
 
-import static com.kgb.js.psi.JSTypes.DOT;
-import static com.kgb.js.psi.JSTypesExernal.PROPERTY_SPACE;
+import static com.kgb.js.psi.JSTypes.*;
+import static com.kgb.js.psi.JSTypesExernal.*;
 
 /**
  * @author Krzysztof Betlej <labiod@wp.pl>
  *         Date: 4/28/17.
  */
 public class JSPsiParserUtil extends GeneratedParserUtilBase {
-    private final static int MAX_OBJECT_REC = 10;
 
-//    public static boolean property_object_external_call(PsiBuilder b, int l) {
-//        Logger LOG = Logger.getInstance(JSPsiParserUtil.class);
-//        LOG.info(b.getTokenText());
-//        LOG.info(b.getTreeBuilt().getText());
-//        return property_object_external_call(b, l, 0);
-//    }
-//
-//    public static boolean property_object_external_call(PsiBuilder b, int l, int rec) {
-//        if (!recursion_guard_(b, l, "property_object_external_call")) return false;
-//        if (rec > MAX_OBJECT_REC) return false;
-//        PsiBuilder.Marker m = enter_section_(b);
-//        boolean r = property_object_external_call(b, l + 1, rec + 1);
-//        if (!r) {
-//            if (!r) {
-//                r = JSParser.property_base(b, l + 1);
-//                r = r && consumeToken(b, DOT);
-//            } else {
-//                r = JSParser.property_base(b, l + 1);
-//                r = !nextTokenIs(b, DOT) || consumeToken(b, DOT);
-//            }
-//        }
-//
-//        exit_section_(b, m, PROPERTY_SPACE, r);
-//        return r;
-//    }
+    public static boolean def_property_external_call(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "def_property")) return false;
+        if (!nextTokenIs(b, VAR)) return false;
+        boolean r;
+        PsiBuilder.Marker m = enter_section_(b);
+        r = consumeToken(b, VAR);
+        r = r && property_object_external_call(b, l + 1);
+        if (nextTokenIs(b, EQ)) {
+            r = r && JSParser.prop_value(b, l + 1);
+        }
+        exit_section_(b, m, DEF_PROPERTY, r);
+        return r;
+    }
+
+    public static boolean assign_property_external_call(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "def_property")) return false;
+        if (!nextTokenIs(b, VAR)) return false;
+        boolean r;
+        PsiBuilder.Marker m = enter_section_(b);
+        r = consumeToken(b, VAR);
+        r = r && property_object_external_call(b, l + 1);
+        if (nextTokenIs(b, EQ)) {
+            r = r && JSParser.prop_value(b, l + 1);
+        }
+        exit_section_(b, m, DEF_PROPERTY, r);
+        return r;
+    }
 
     public static boolean property_object_external_call(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "property_object_external_call")) return false;
-        PsiBuilder.Marker m = enter_section_(b);
-        boolean r;
-        r = JSParser.property_base(b, l + 1);
-        if (nextTokenIs(b, DOT)) {
-            r = r && consumeToken(b, DOT);
-            r = r && property_object_external_call(b, l + 1);
+        if (b.getTokenType() != VNAME) {
+            return false;
         }
+        PsiBuilder.Marker m = enter_section_(b);
+        boolean result = parse_innner_property(b, l + 1, 0);
+        exit_section_(b, m, PROPERTY_OBJECT, result);
+        return result;
+    }
 
-        exit_section_(b, m, PROPERTY_SPACE, r);
-        return r;
+    private static boolean parse_innner_property(PsiBuilder b, int l, int parseIndex) {
+        if (!recursion_guard_(b, l, "parse_inner_property")) return false;
+        boolean result = true;
+        int i = parseIndex;
+        if ((i = getNextDotIndex(b, i)) != -1) {
+            PsiBuilder.Marker parentMarker = enter_section_(b);
+            result = parse_innner_property(b, l + 1, i + 1);
+            exit_section_(b, parentMarker , PROPERTY_SPACE, result);
+        }
+        if (result) {
+            PsiBuilder.Marker m = enter_section_(b);
+            result = JSParser.property_base(b, l);
+            exit_section_(b, m, PROPERTY_MAIN, result);
+            if (nextTokenIs(b, DOT)) {
+                result = result && consumeToken(b, DOT);
+            }
+        }
+        return result;
+    }
+
+    private static int getNextDotIndex(PsiBuilder builder, int i) {
+        while (builder.lookAhead(i) != EQ && builder.lookAhead(i) != SEMI && builder.lookAhead(i) != null) {
+            if (builder.lookAhead(i) == DOT) {
+                return i;
+            }
+            i++;
+        }
+        return -1;
     }
 }

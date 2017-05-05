@@ -7,6 +7,7 @@ import com.intellij.json.structureView.JsonStructureViewModel;
 import com.intellij.lang.PsiStructureViewFactory;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiFile;
+import com.kgb.js.psi.JSFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +23,7 @@ public class JSStructureViewFactory implements PsiStructureViewFactory {
             @NotNull
             @Override
             public StructureViewModel createStructureViewModel(@Nullable Editor editor) {
-                return new JSStructureViewModel(psiFile);
+                return new JSStructureViewModel((JSFile) psiFile);
             }
         };
     }

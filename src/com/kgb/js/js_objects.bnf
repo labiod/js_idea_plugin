@@ -84,6 +84,7 @@
     ]
 
     extends(".*_property")="classDef"
+    implements(".*_property")="com.kgb.js.psi.JSPropertySet"
     extends("function_def")="classDef"
     implements("property_.*")="com.kgb.js.psi.JSProperty"
     extends("property_.*")="com.kgb.js.psi.impl.JSPropertyImpl"
@@ -143,8 +144,9 @@ do_while_statement ::= do LP body RP while LP2 (ternary_block | cond) RP2
     End Javascript statement
  */
 private definition ::= (def_property SEMI) | (assign_property SEMI) | function_def
-def_property ::= var property_object (EQ value)? {methods=[getNameIdentifier isFunctionRef getPresentation getMethodsInner]}
-assign_property ::= property_object EQ value {methods=[getNameIdentifier isFunctionRef getPresentation getMethodsInner]}
+external def_property ::= def_property_external_call
+private prop_value ::= (EQ value)?
+external assign_property ::= assign_property_externall_call
 function_def ::= function vname? fun_args LP body RP
     {implements="com.kgb.js.psi.JSMethod" methods=[getNameIdentifier getArgsLength getPresentation getMethodsInner]}
 array_value ::= LP3 array_params RP3
@@ -155,9 +157,7 @@ fun_args ::= LP2 <<comma_separated_list(fun_arg)>>? RP2 {methods=[getLength]}
 
 fun_arg ::= vname
 
-property_object ::= property_object_external {methods=[getNameIdentifier getMethodsInner getPresentation getNamespace getObject]}
-//property_space ::= property_object_external {methods=[getNameIdentifier getMethodsInner getPresentation]}
-external property_object_external ::= property_object_external_call  {methods=[getNameIdentifier getMethodsInner getPresentation]}
+external property_object ::= property_object_external_call
 property_base ::= function_call | property_array | vname {methods=[getNameIdentifier getMethodsInner getPresentation]}
 
 property_array ::= vname prop_array_inner {methods=[getNameIdentifier getMethodsInner]}

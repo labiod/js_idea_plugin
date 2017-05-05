@@ -15,8 +15,8 @@ import org.jetbrains.annotations.Nullable;
  *         Date: 4/14/17.
  */
 public class JSStructureViewModel extends StructureViewModelBase implements StructureViewModel.ElementInfoProvider {
-    public JSStructureViewModel(PsiFile psiFile) {
-        super(psiFile, new JSStructureViewElement(psiFile));
+    public JSStructureViewModel(JSFile psiFile) {
+        super(psiFile, new JSStructureFileElement(psiFile));
     }
 
     @NotNull

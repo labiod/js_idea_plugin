@@ -1,6 +1,7 @@
 package com.kgb.js.psi.utils;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -20,27 +21,15 @@ public class JSPsiImplUtil {
         return property;
     }
 
-    public static PsiElement getNameIdentifier(JSDefProperty propertyDef) {
-        return propertyDef.getPropertyObject();
-    }
-
     public static PsiElement getNameIdentifier(JSPropertyArray propertyArray) {
         return propertyArray.getVname();
-    }
-
-    public static PsiElement getNameIdentifier(JSAssignProperty propertyAssign) {
-        return propertyAssign.getPropertyObject();
-    }
-
-    public static PsiElement getNameIdentifier(JSPropertyObject property) {
-        return property.getNamespace();
     }
 
     public static PsiElement getNameIdentifier(JSFunctionDef functionDef) {
         if (functionDef.getVname() != null) {
             return functionDef.getVname();
         } else {
-            return functionDef.getParent() instanceof JSValue ? ((JSDefProperty)functionDef.getParent().getParent())
+            return functionDef.getParent() instanceof JSValue ? ((JSPropertySet)functionDef.getParent().getParent())
                     .getPropertyObject().getNameIdentifier() : null;
         }
     }
@@ -49,10 +38,10 @@ public class JSPsiImplUtil {
         return typeDef;
     }
 
-    public static JSPropertySpace getNamespace(JSClassDef classDef) {
-        return null;
+    public static JSProperty getNamespace(JSClassDef classDef) {
+        ASTNode node = classDef.getNode().findChildByType(JSTypesExernal.PROPERTY_SPACE);
+        return node != null ? (JSPropertySpace) node.getPsi() : null;
     }
-
     public static JSPropertySpace getNamespace(JSPropertySpace classDef) {
         return classDef;
     }
@@ -105,14 +94,6 @@ public class JSPsiImplUtil {
     }
 
     //Get Presentation block
-
-    public static ItemPresentation getPresentation(JSDefProperty propertyDef) {
-        return JSPropertyPsiUtils.getPresentation(propertyDef);
-    }
-
-    public static ItemPresentation getPresentation(JSAssignProperty propertyAssign) {
-        return JSPropertyPsiUtils.getPresentation(propertyAssign);
-    }
 
     public static ItemPresentation getPresentation(JSPropertySpace property) {
         return JSPropertyPsiUtils.getPresentation(property);
