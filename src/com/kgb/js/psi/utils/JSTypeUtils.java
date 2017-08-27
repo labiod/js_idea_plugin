@@ -15,8 +15,8 @@ public class JSTypeUtils {
         JSPrimaryInner primaryInner = expr.getPrimaryInner();
         if (primaryInner.getTypeDef() != null) {
             return primaryInner.getTypeDef();
-        } else if (primaryInner.getPropertyObject() != null) {
-            return primaryInner.getPropertyObject();
+        } else if (primaryInner.getFirstChild() != null && primaryInner.getFirstChild() instanceof JSClass) {
+            return (JSClass) primaryInner.getFirstChild();
         } else {
             return null;
         }

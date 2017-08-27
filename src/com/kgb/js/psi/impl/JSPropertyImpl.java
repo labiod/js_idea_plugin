@@ -17,11 +17,29 @@ public abstract class JSPropertyImpl extends JSClassImpl implements JSProperty {
 
     @Override
     public JSProperty getParentProperty() {
-        return null;
+        return getNamespace();
     }
 
     @Override
-    public JSPropertySpace getNamespace() {
+    public JSProperty getNamespace() {
         return findChildByClass(JSPropertySpace.class);
+    }
+
+    @Override
+    public void setNameSpace(JSProperty property) {
+
+    }
+
+    @Override
+    public String getFullName() {
+        return getCorrectNameSpace() + getName();
+    }
+
+    private String getCorrectNameSpace() {
+        return getNamespace() != null ?
+                getNamespace().getText().endsWith(".") ?
+                        getNamespace().getText()
+                        : getNamespace().getText() + "."
+                : "";
     }
 }

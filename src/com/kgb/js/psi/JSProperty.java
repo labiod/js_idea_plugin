@@ -6,4 +6,8 @@ package com.kgb.js.psi;
  */
 public interface JSProperty extends JSClassDef {
     JSProperty getParentProperty();
+
+    void setNameSpace(JSProperty propertyObject);
+
+    String getFullName();
 }

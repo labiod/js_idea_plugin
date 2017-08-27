@@ -24,5 +24,5 @@ public interface JSClass extends JSPsiBase {
     @NotNull
     JSMethod[] getAllMethods();
 
-    JSPropertySpace getNamespace();
+    JSProperty getNamespace();
 }
