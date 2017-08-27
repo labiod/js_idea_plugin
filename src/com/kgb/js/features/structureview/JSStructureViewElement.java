@@ -55,6 +55,16 @@ public class JSStructureViewElement implements StructureViewTreeElement, Sortabl
                     JSStructureViewElement treeElement = getDefinitionFromTree(treeElements, def);
                     if (treeElement != null) {
                         treeElements.remove(treeElement);
+                    } else if (def instanceof JSDefProperty) {
+                        JSProperty parentProperty = ((JSDefProperty) def).getPropertyObject().getParentProperty();
+                        if (parentProperty != null) {
+                            Logger.getInstance(getClass()).info(parentProperty.getText());
+                        }
+                    } else if (def instanceof JSAssignProperty) {
+                        JSProperty parentProperty = ((JSAssignProperty) def).getPropertyObject().getParentProperty();
+                        if (parentProperty != null) {
+                            Logger.getInstance(getClass()).info(parentProperty.getText());
+                        }
                     }
                     treeElements.add(new JSStructureViewElement(def));
                 }
@@ -73,7 +83,15 @@ public class JSStructureViewElement implements StructureViewTreeElement, Sortabl
                         treeElements.remove(treeElement);
 
                     } else if (property instanceof JSDefProperty) {
-                        JSPropertyObject parentProperty = ((JSDefProperty) property).getPropertyObject();
+                        JSProperty parentProperty = ((JSDefProperty) property).getPropertyObject().getParentProperty();
+                        if (parentProperty != null) {
+                            Logger.getInstance(getClass()).info(parentProperty.getText());
+                        }
+                    } else if (property instanceof JSAssignProperty) {
+                        JSProperty parentProperty = ((JSAssignProperty) property).getPropertyObject().getParentProperty();
+                        if (parentProperty != null) {
+                            Logger.getInstance(getClass()).info(parentProperty.getText());
+                        }
                     }
                     treeElements.add(new JSStructureViewElement(property));
                 }
