@@ -2,4 +2,5 @@
 .idea
 /out
 /src/*.jar
-/src/idea-flex.skeleton
+*.jar
+idea-flex.skeleton
