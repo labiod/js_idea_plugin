@@ -27,7 +27,7 @@ public class JSFileType extends LanguageFileType {
     @NotNull
     @Override
     public String getDescription() {
-        return JSConstant.LISP_LANG_DESCRIPTION;
+        return JSConstant.JS_LANG_DESCRIPTION;
     }
 
     @NotNull
@@ -39,6 +39,6 @@ public class JSFileType extends LanguageFileType {
     @Nullable
     @Override
     public Icon getIcon() {
-        return AllIcons.FileTypes.JavaScript;
+        return JsIcons.FILE_ICON;
     }
 }

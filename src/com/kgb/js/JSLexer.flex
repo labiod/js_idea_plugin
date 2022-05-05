@@ -5,7 +5,7 @@ import com.intellij.psi.tree.IElementType;
 
 import static com.intellij.psi.TokenType.BAD_CHARACTER;
 import static com.intellij.psi.TokenType.WHITE_SPACE;
-import static com.kgb.js.psi.JSTypes.*;
+import static com.kgb.js.highlighters.psi.JSTypes.*;
 
 %%
 
@@ -29,8 +29,8 @@ NUMBER=[0-9]+(\.[0-9]*)?
 STRING=('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")
 NEWLINE=\n
 SPACE=[\s\t]+
+MULTILINE_COMMENT="/*".*"*/"
 COMMENT="//".*
-MULTILINE_COMMENT="/"\*.*\n\t\r\*"/"
 VNAME=[:letter:][a-zA-Z_0-9]*
 
 %%
@@ -86,13 +86,14 @@ VNAME=[:letter:][a-zA-Z_0-9]*
   "return"                 { return RETURN; }
   "while"                  { return WHILE; }
   "do"                     { return DO; }
+  "in"                     { return IN; }
 
   {NUMBER}                 { return NUMBER; }
   {STRING}                 { return STRING; }
   {NEWLINE}                { return NEWLINE; }
   {SPACE}                  { return SPACE; }
-  {COMMENT}                { return COMMENT; }
   {MULTILINE_COMMENT}      { return MULTILINE_COMMENT; }
+  {COMMENT}                { return COMMENT; }
   {VNAME}                  { return VNAME; }
 
 }
