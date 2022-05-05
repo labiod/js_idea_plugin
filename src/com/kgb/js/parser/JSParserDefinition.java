@@ -13,28 +13,31 @@ import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.kgb.js.JSLanguage;
+import com.kgb.js.highlighters.psi.JSTypes;
 import com.kgb.js.lexer.JSLexerAdapter;
 import com.kgb.js.psi.JSFile;
-import com.kgb.js.psi.JSTypes;
 import org.jetbrains.annotations.NotNull;
 
 public class JSParserDefinition implements ParserDefinition {
     public static final TokenSet WHITE_SPACE = TokenSet.create(TokenType.WHITE_SPACE);
-    public static final TokenSet COMMENTS = TokenSet.create(JSTypes.COMMENT);
+    public static final TokenSet COMMENTS = TokenSet.create(JSTypes.MULTILINE_COMMENT, JSTypes.COMMENT);
     public static final TokenSet STRING_LITERAL = TokenSet.create(JSTypes.STRING);
 
-    private static final  IFileElementType FILE = new IFileElementType(Language.findInstance(JSLanguage.class));
+    private static final  IFileElementType FILE = new IFileElementType(JSLanguage.INSTANCE);
+
     @NotNull
     @Override
     public Lexer createLexer(Project project) {
         return new JSLexerAdapter();
     }
 
+    @NotNull
     @Override
     public PsiParser createParser(Project project) {
         return new JSParser();
     }
 
+    @NotNull
     @Override
     public IFileElementType getFileNodeType() {
         return FILE;
@@ -61,16 +64,17 @@ public class JSParserDefinition implements ParserDefinition {
     @NotNull
     @Override
     public PsiElement createElement(ASTNode astNode) {
-        return new JSTypes.Factory().createElement(astNode);
+        return JSTypes.Factory.createElement(astNode);
     }
 
+    @NotNull
     @Override
-    public PsiFile createFile(FileViewProvider fileViewProvider) {
+    public PsiFile createFile(@NotNull FileViewProvider fileViewProvider) {
         return new JSFile(fileViewProvider);
     }
 
     @Override
-    public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode astNode, ASTNode astNode1) {
+    public SpaceRequirements spaceExistenceTypeBetweenTokens(ASTNode astNode, ASTNode astNode1) {
         return SpaceRequirements.MAY;
     }
 }

@@ -7,9 +7,8 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
+import com.kgb.js.highlighters.psi.JSTypes;
 import com.kgb.js.lexer.JSLexerAdapter;
-import com.kgb.js.psi.JSTypes;
-import netscape.javascript.JSUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

@@ -1,6 +1,6 @@
 {
     parserClass="com.kgb.js.parser.JSParser"
-//    parserUtilClass="com.kgb.lisp.parser.LispParserUtil"
+    parserUtilClass="com.kgb.js.parser.JSParserUtil"
 
     psiClassPrefix="JS"
     psiImplClassSuffix="Impl"
@@ -8,7 +8,7 @@
     psiImplPackage="com.kgb.js.psi.impl"
     psiImplUtilClass="com.kgb.js.psi.impl.JSPsiImplUtil"
 
-    elementTypeHolderClass="com.kgb.js.psi.JSTypes"
+    elementTypeHolderClass="com.kgb.js.highlighters.psi.JSTypes"
     elementTypeClass="com.kgb.js.psi.JSElementType"
     tokenTypeClass="com.kgb.js.psi.JSTokenType"
 

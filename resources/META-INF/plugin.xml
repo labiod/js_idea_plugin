@@ -1,6 +1,6 @@
-<idea-plugin version="2">
+<idea-plugin>
   <id>JS</id>
-  <name>Javascript idea plugin</name>
+  <name>Javascript idea extension</name>
   <version>0.0.1</version>
   <vendor email="kgbetlej@gmail.com" url=""/>
 
@@ -31,7 +31,7 @@
   </change-notes>
 
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-  <idea-version since-build="145.0"/>
+  <idea-version since-build="184.0"/>
 
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
        on how to target different products -->
@@ -40,14 +40,21 @@
   -->
   <extensions defaultExtensionNs="com.intellij">
     <!-- Add your extensions here -->
-    <fileTypeFactory implementation="com.kgb.js.JSFileTypeFactory" />
+    <fileType
+            name="Javascript file"
+            implementationClass="com.kgb.js.JSFileType"
+            fieldName="INSTANCE"
+            language="JS"
+            extensions="js"
+            />
     <lang.parserDefinition language="JS" implementationClass="com.kgb.js.parser.JSParserDefinition" />
+
     <lang.syntaxHighlighterFactory language="JS" implementationClass="com.kgb.js.highlighters.BaseSynthaxHighlighterFactory" />
     <lang.commenter language="JS" implementationClass="com.kgb.js.lang.feature.JSCommenter" />
 
     <!-- Annotators -->
-    <!--<annotator language="Javascript" implementationClass="com.kgb.lisp.annotators.LispDefFunAnnotator" />-->
-    <!--<annotator language="Javascript" implementationClass="com.kgb.lisp.annotators.LispPropertyAnnotator" />-->
+<!--    <annotator language="Javascript" implementationClass="com.kgb.lisp.annotators.LispDefFunAnnotator" />-->
+<!--    <annotator language="Javascript" implementationClass="com.kgb.lisp.annotators.LispPropertyAnnotator" />-->
     <!-- Settings pages -->
     <!--<colorSettingsPage implementation="com.kgb.lisp.settings.LispColorSettingsPage" />-->
 
@@ -55,7 +62,7 @@
     <!--<codeInsight.lineMarkerProvider language="Javascript" implementationClass="com.kgb.lisp.linemarkers.LineMarkerProvider" />-->
 
     <!-- Completion contributor -->
-    <!--<completion.contributor language="Lisp" implementationClass="com.kgb.lisp.completion.LispCompletionContributor" />-->
+    <completion.contributor language="JS" implementationClass="com.kgb.js.completion.JSCompletionContributor" />
     <!--<completion.contributor language="Lisp" implementationClass="com.kgb.lisp.completion.LispMakeCompletionContributor" />-->
     <!--<completion.contributor language="Lisp" implementationClass="com.kgb.lisp.completion.LispLoadCompletionContributor" />-->
 
@@ -64,7 +71,7 @@
 
   <actions>
     <!-- Add your actions here -->
-    <action id="js_new_file" class="com.kgb.js.actions.JsNewFileAction" text="Js file">
+    <action id="js_new_file" class="com.kgb.js.actions.JsNewFileAction" text="Js File">
       <add-to-group group-id="NewGroup" anchor="first"/>
     </action>
   </actions>

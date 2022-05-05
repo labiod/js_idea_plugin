@@ -13,7 +13,11 @@ There is no release version of this plugin, so if you want to use it, us must co
 * set Intellij Idea plugin sdk in project settings
 
 ### Build
-* rebuild Lexer
-  * if something change in js.bnf file right click on it and click: Generate JFlex Lexer
-  * right click on JSLexer.flex file and click option: Run JFlex generator
+* open js.bnf file (stable version) or js_beta.bnf (beta version)
+* right mouse button click and choose option: Generate Parser Code or use shortcut (on windows ctrl+shift+G)
+* right mouse button click again and choose: Generate JFlex Lexer
+* right click on JSLexer.flex file and choose option: Run JFlex generator
+  * before Run JFlex generator check JSLexer.flex 
+  * some version of JFlex add prefix: "_" to lexer class like this _JSLexer
+  * remove "_" prefix before run jflex
 * run application

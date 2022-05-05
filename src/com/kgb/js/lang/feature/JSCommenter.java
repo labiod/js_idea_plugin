@@ -1,7 +1,6 @@
 package com.kgb.js.lang.feature;
 
 import com.intellij.lang.Commenter;
-import com.kgb.js.psi.JSTypes;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -29,12 +28,12 @@ public class JSCommenter implements Commenter {
     @Nullable
     @Override
     public String getCommentedBlockCommentPrefix() {
-        return null;
+        return "/*";
     }
 
     @Nullable
     @Override
     public String getCommentedBlockCommentSuffix() {
-        return null;
+        return "*/";
     }
 }
